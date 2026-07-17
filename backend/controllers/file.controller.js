@@ -1,31 +1,49 @@
 import prisma from "../config/prisma.js";
 
-export const createFile = async (req, res) => {
-    try {
-        const { repositoryId, filename, content } = req.body;
+export const createFile = async (req,res)=>{
+
+    try{
+
+        const {
+            repositoryId,
+            filename,
+            content
+        } = req.body;
+
 
         const file = await prisma.file.create({
-            data: {
-                repositoryId: Number(repositoryId),
+
+            data:{
+                repositoryId:Number(repositoryId),
                 filename,
                 content
             }
+
         });
+
 
         res.status(201).json({
-            success: true,
-            message: "File created successfully",
-            data: file
+
+            success:true,
+            message:"File created successfully",
+            data:file
+
         });
 
-    } catch (error) {
-        console.error(error);
+
+    }catch(error){
+
+        console.log(error);
 
         res.status(500).json({
-            success: false,
-            message: error.message
+
+            success:false,
+            message:error.message
+
         });
+
     }
+
 };
 
 export const getFiles = async (req, res) => {

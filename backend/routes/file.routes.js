@@ -9,16 +9,28 @@ import {
     deleteFile
 } from "../controllers/file.controller.js";
 
+
 const router = express.Router();
 
+
+// Create file
 router.post("/create", authMiddleware, createFile);
 
+
+// Get repository files
 router.get("/repository/:repositoryId", authMiddleware, getFiles);
 
+
+// Get single file
 router.get("/:id", authMiddleware, getFile);
 
+
+// Update file
 router.put("/:id", authMiddleware, updateFile);
 
+
+// Delete file
 router.delete("/:id", authMiddleware, deleteFile);
+
 
 export default router;

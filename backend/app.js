@@ -5,15 +5,22 @@ import dotenv from "dotenv";
 import authRoutes from "./routes/auth.routes.js";
 import userRoutes from "./routes/user.routes.js";
 import fileRoutes from "./routes/file.routes.js";
-dotenv.config();
 import repositoryRoutes from "./routes/repository.routes.js";
+import commitRoutes from "./routes/commit.routes.js";
+import branchRoutes from "./routes/branch.routes.js";
+
+dotenv.config();
+
 
 const app = express();
 
+
+// Middleware
 app.use(cors());
 app.use(express.json());
 
 
+// Test API
 app.get("/", (req, res) => {
     res.json({
         success: true,
@@ -21,13 +28,25 @@ app.get("/", (req, res) => {
     });
 });
 
+
+// Routes
 app.use("/api/auth", authRoutes);
+
 app.use("/api/user", userRoutes);
+
 app.use("/api/files", fileRoutes);
+
 app.use("/api/repositories", repositoryRoutes);
-app.use("/file", fileRoutes);
+
+app.use("/api/commits", commitRoutes);
+app.use("/api/branches", branchRoutes);
+
+// Server
 const PORT = process.env.PORT || 5000;
 
+
 app.listen(PORT, () => {
+
     console.log(`Server running on http://localhost:${PORT}`);
+
 });
