@@ -8,26 +8,24 @@ datasource db {
 }
 
 model User {
-  id           Int          @id @default(autoincrement())
-  name         String
-  email        String       @unique
-  password     String
+  id       Int    @id @default(autoincrement())
+  name     String
+  email    String @unique
+  password String
 
   repositories Repository[]
 
-  createdAt    DateTime     @default(now())
-  updatedAt    DateTime     @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Repository {
-  id          Int      @id @default(autoincrement())
+  id          Int     @id @default(autoincrement())
   name        String
   description String?
-
   ownerId     Int
 
-  owner User @relation(fields: [ownerId], references: [id], onDelete: Cascade)
-
+  owner User   @relation(fields: [ownerId], references: [id], onDelete: Cascade)
   files File[]
 
   createdAt DateTime @default(now())
@@ -35,13 +33,13 @@ model Repository {
 }
 
 model File {
-  id           Int      @id @default(autoincrement())
+  id           Int    @id @default(autoincrement())
   filename     String
   content      String
   repositoryId Int
 
-  repository   Repository @relation(fields: [repositoryId], references: [id], onDelete: Cascade)
+  repository Repository @relation(fields: [repositoryId], references: [id], onDelete: Cascade)
 
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }

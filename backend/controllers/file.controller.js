@@ -1,168 +1,152 @@
-import prisma from "../config/database.js";
+import prisma from "../config/prisma.js";
 
-// Create File
 export const createFile = async (req, res) => {
     try {
-        const { filename, content, repositoryId } = req.body;
-
-        if (!filename || !repositoryId) {
-            return res.status(400).json({
-                success: false,
-                message: "Filename and repositoryId are required"
-            });
-        }
-
-        // Check repository ownership
-        const repository = await prisma.repository.findFirst({
-            where: {
-                id: Number(repositoryId),
-                ownerId: req.user.id
-            }
-        });
-
-        if (!repository) {
-            return res.status(404).json({
-                success: false,
-                message: "Repository not found"
-            });
-        }
+        const { repositoryId, filename, content } = req.body;
 
         const file = await prisma.file.create({
             data: {
+                repositoryId: Number(repositoryId),
                 filename,
-                content: content || "",
-                repositoryId: Number(repositoryId)
-            }
-        });
-
-        return res.status(201).json({
-            success: true,
-            message: "File created successfully",
-            file
-        });
-
-    } catch (error) {
-        console.error(error);
-
-        return res.status(500).json({
-            success: false,
-            message: "Internal Server Error"
-        });
-    }
-};
-
-// Get Files of Repository
-export const getFiles = async (req, res) => {
-    try {
-        const { repositoryId } = req.params;
-
-        const files = await prisma.file.findMany({
-            where: {
-                repositoryId: Number(repositoryId)
-            }
-        });
-
-        return res.status(200).json({
-            success: true,
-            files
-        });
-
-    } catch (error) {
-        console.error(error);
-
-        return res.status(500).json({
-            success: false,
-            message: "Internal Server Error"
-        });
-    }
-};
-
-// Get Single File
-export const getFile = async (req, res) => {
-    try {
-        const { id } = req.params;
-
-        const file = await prisma.file.findUnique({
-            where: {
-                id: Number(id)
-            }
-        });
-
-        if (!file) {
-            return res.status(404).json({
-                success: false,
-                message: "File not found"
-            });
-        }
-
-        return res.status(200).json({
-            success: true,
-            file
-        });
-
-    } catch (error) {
-        console.error(error);
-
-        return res.status(500).json({
-            success: false,
-            message: "Internal Server Error"
-        });
-    }
-};
-
-// Update File
-export const updateFile = async (req, res) => {
-    try {
-        const { id } = req.params;
-        const { content } = req.body;
-
-        const updatedFile = await prisma.file.update({
-            where: {
-                id: Number(id)
-            },
-            data: {
                 content
             }
         });
 
-        return res.status(200).json({
+        res.status(201).json({
             success: true,
-            message: "File updated successfully",
-            file: updatedFile
+            message: "File created successfully",
+            data: file
         });
 
     } catch (error) {
         console.error(error);
 
-        return res.status(500).json({
+        res.status(500).json({
             success: false,
-            message: "Internal Server Error"
+            message: error.message
         });
     }
 };
 
-// Delete File
-export const deleteFile = async (req, res) => {
+export const getFiles = async (req, res) => {
     try {
-        const { id } = req.params;
 
-        await prisma.file.delete({
+        const repositoryId = Number(req.params.repositoryId);
+
+        const files = await prisma.file.findMany({
             where: {
-                id: Number(id)
+                repositoryId
             }
         });
 
-        return res.status(200).json({
+        res.status(200).json({
+            success: true,
+            data: files
+        });
+    } catch (error) {
+
+        console.error(error);
+
+        res.status(500).json({
+            success: false,
+            message: error.message
+        });
+    }
+};
+
+export const getFile = async (req, res) => {
+    try {
+
+        const id = Number(req.params.id);
+
+        const file = await prisma.file.findUnique({
+            where: {
+                id
+            }
+        });
+        if (!file) {
+
+            return res.status(404).json({
+                success: false,
+                message: "File not found"
+            });
+
+        }
+
+        res.status(200).json({
+            success: true,
+            data: file
+        });
+
+         } catch (error) {
+
+        console.error(error);
+
+        res.status(500).json({
+            success: false,
+            message: error.message
+        });
+    }
+
+};
+
+export const updateFile = async (req, res) => {
+    try {
+
+        const id = Number(req.params.id);
+
+        const { filename, content } = req.body;
+
+        const file = await prisma.file.update({
+            where: {
+                id
+            },
+            data: {
+                filename,
+                content
+            }
+        });
+
+        res.status(200).json({
+            success: true,
+            message: "File updated successfully",
+            data: file
+        });
+
+        } catch (error) {
+
+        console.error(error);
+
+        res.status(500).json({
+            success: false,
+            message: error.message
+        });
+    }
+};
+
+export const deleteFile = async (req, res) => {
+    try {
+
+        const id = Number(req.params.id);
+
+        await prisma.file.delete({
+            where: {
+                id
+            }
+        });
+
+        res.status(200).json({
             success: true,
             message: "File deleted successfully"
         });
 
-    } catch (error) {
+         } catch (error) {
+
         console.error(error);
 
-        return res.status(500).json({
+        res.status(500).json({
             success: false,
-            message: "Internal Server Error"
+            message: error.message
         });
     }
 };
