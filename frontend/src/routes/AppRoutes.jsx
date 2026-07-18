@@ -13,6 +13,7 @@ import ProtectedRoute from "../components/ProtectedRoute";
 import CreateRepository from "../pages/CreateRepository";
 import Repositories from "../pages/Repositories";
 import RepositoryPage from "../pages/RepositoryPage";
+import FilePage from "../pages/FilePage";
 function AppRoutes(){
 
 
@@ -73,6 +74,11 @@ element={
 <Route 
  path="/repository/:id" 
  element={<RepositoryPage />}
+/>
+
+<Route
+    path="/repository/:repoId/file/:fileId"
+    element={<FilePage />}
 />
 
 </Routes>

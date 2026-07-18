@@ -6,7 +6,8 @@ import {
     getFiles,
     getFile,
     updateFile,
-    deleteFile
+    deleteFile,
+    getFileById
 } from "../controllers/file.controller.js";
 
 
@@ -32,5 +33,7 @@ router.put("/:id", authMiddleware, updateFile);
 // Delete file
 router.delete("/:id", authMiddleware, deleteFile);
 
+// Get file by ID
+router.get("/file/:id", authMiddleware, getFileById);
 
 export default router;

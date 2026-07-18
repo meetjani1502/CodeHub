@@ -108,63 +108,139 @@ export const getFile = async (req, res) => {
 
 };
 
-export const updateFile = async (req, res) => {
-    try {
+export const updateFile = async(req,res)=>{
 
-        const id = Number(req.params.id);
+    try{
 
-        const { filename, content } = req.body;
+        const {id} = req.params;
+
+        const {
+            filename,
+            content
+        } = req.body;
+
 
         const file = await prisma.file.update({
-            where: {
-                id
+
+            where:{
+                id:Number(id)
             },
-            data: {
+
+            data:{
                 filename,
                 content
             }
+
         });
 
-        res.status(200).json({
-            success: true,
-            message: "File updated successfully",
-            data: file
+
+        res.json({
+
+            success:true,
+            message:"File updated successfully",
+            file
+
         });
 
-        } catch (error) {
 
-        console.error(error);
+    }
+    catch(error){
 
         res.status(500).json({
-            success: false,
-            message: error.message
+
+            success:false,
+            message:error.message
+
         });
+
     }
+
 };
 
-export const deleteFile = async (req, res) => {
-    try {
+export const deleteFile = async(req,res)=>{
 
-        const id = Number(req.params.id);
+    try{
 
-        await prisma.file.delete({
-            where: {
-                id
+        const {id} = req.params;
+
+
+        const file = await prisma.file.delete({
+
+            where:{
+                id:Number(id)
             }
+
         });
 
-        res.status(200).json({
-            success: true,
-            message: "File deleted successfully"
+
+        res.json({
+
+            success:true,
+            message:"File deleted successfully",
+            file
+
         });
 
-         } catch (error) {
 
-        console.error(error);
+    }catch(error){
 
         res.status(500).json({
-            success: false,
-            message: error.message
+
+            success:false,
+            message:error.message
+
         });
+
     }
+
+};
+
+export const getFileById = async(req,res)=>{
+
+    try{
+
+        const {id} = req.params;
+
+
+        const file = await prisma.file.findUnique({
+
+            where:{
+                id:Number(id)
+            }
+
+        });
+
+
+        if(!file){
+
+            return res.status(404).json({
+
+                success:false,
+                message:"File not found"
+
+            });
+
+        }
+
+
+        res.json({
+
+            success:true,
+            file
+
+        });
+
+
+    }
+    catch(error){
+
+        res.status(500).json({
+
+            success:false,
+            message:error.message
+
+        });
+
+    }
+
 };
