@@ -76,6 +76,8 @@ export const getRepositoryById = async (req, res) => {
             }
         });
 
+
+
         if (!repository) {
             return res.status(404).json({
                 success: false,
@@ -95,6 +97,55 @@ export const getRepositoryById = async (req, res) => {
             success: false,
             message: "Internal Server Error"
         });
+    }
+
+    try{
+
+        const {id} = req.params;
+
+
+        const repository = await prisma.repository.findUnique({
+
+            where:{
+                id:Number(id)
+            },
+
+            include:{
+                files:true,
+                commits:true,
+                branches:true
+            }
+
+        });
+
+
+        if(!repository){
+
+            return res.status(404).json({
+                success:false,
+                message:"Repository not found"
+            });
+
+        }
+
+
+        res.json({
+
+            success:true,
+            repository
+
+        });
+
+
+    }catch(error){
+
+        res.status(500).json({
+
+            success:false,
+            message:error.message
+
+        });
+
     }
 };
 

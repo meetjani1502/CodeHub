@@ -210,3 +210,119 @@ export const deleteBranch = async (req, res) => {
     }
 
 };
+
+// Checkout Branch
+export const checkoutBranch = async (req, res) => {
+
+    try {
+
+        const branchId = Number(req.params.branchId);
+
+        // Find branch
+        const branch = await prisma.branch.findUnique({
+            where: {
+                id: branchId
+            }
+        });
+
+        if (!branch) {
+            return res.status(404).json({
+                success: false,
+                message: "Branch not found"
+            });
+        }
+
+        // Update repository current branch
+        await prisma.repository.update({
+            where: {
+                id: branch.repositoryId
+            },
+            data: {
+                currentBranchId: branch.id
+            }
+        });
+
+        res.json({
+            success: true,
+            message: `Switched to '${branch.name}' branch`
+        });
+
+    } catch (error) {
+
+        console.error(error);
+
+        res.status(500).json({
+            success: false,
+            message: error.message
+        });
+
+    }
+
+};
+
+// Merge Branch
+export const mergeBranch = async (req, res) => {
+
+    try {
+
+        const {
+            sourceBranchId,
+            targetBranchId,
+            message
+        } = req.body;
+
+        // Check source branch
+        const sourceBranch = await prisma.branch.findUnique({
+            where: {
+                id: Number(sourceBranchId)
+            }
+        });
+
+        if (!sourceBranch) {
+            return res.status(404).json({
+                success: false,
+                message: "Source branch not found"
+            });
+        }
+
+        // Check target branch
+        const targetBranch = await prisma.branch.findUnique({
+            where: {
+                id: Number(targetBranchId)
+            }
+        });
+
+        if (!targetBranch) {
+            return res.status(404).json({
+                success: false,
+                message: "Target branch not found"
+            });
+        }
+
+        // Create merge commit
+        const commit = await prisma.commit.create({
+            data: {
+                repositoryId: targetBranch.repositoryId,
+                branchId: targetBranch.id,
+                message
+            }
+        });
+
+        res.status(201).json({
+            success: true,
+            message: "Branch merged successfully",
+            data: commit
+        });
+
+    } catch (error) {
+
+        console.error(error);
+
+        res.status(500).json({
+            success: false,
+            message: error.message
+        });
+
+    }
+
+};

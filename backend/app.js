@@ -8,6 +8,7 @@ import fileRoutes from "./routes/file.routes.js";
 import repositoryRoutes from "./routes/repository.routes.js";
 import commitRoutes from "./routes/commit.routes.js";
 import branchRoutes from "./routes/branch.routes.js";
+import pullRequestRoutes from "./routes/pullRequest.routes.js";
 
 dotenv.config();
 
@@ -40,6 +41,7 @@ app.use("/api/repositories", repositoryRoutes);
 
 app.use("/api/commits", commitRoutes);
 app.use("/api/branches", branchRoutes);
+app.use("/api/pullrequests", pullRequestRoutes);
 
 // Server
 const PORT = process.env.PORT || 5000;

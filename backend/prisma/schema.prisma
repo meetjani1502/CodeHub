@@ -8,107 +8,87 @@ datasource db {
 }
 
 model User {
-  id Int @id @default(autoincrement())
-
-  name String
-
-  email String @unique
-
-  password String
-
+  id           Int          @id @default(autoincrement())
+  name         String
+  email        String       @unique
+  password     String
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
   repositories Repository[]
-
-  createdAt DateTime @default(now())
-
-  updatedAt DateTime @updatedAt
 }
 
 model Repository {
-  id Int @id @default(autoincrement())
-
-  name String
-
-  description String?
-
-  ownerId Int
-
-  owner User @relation(fields: [ownerId], references: [id])
-
-  files File[]
-
-  commits Commit[]
-
-  branches Branch[]
-
-  createdAt DateTime @default(now())
-
-  updatedAt DateTime @updatedAt
+  id              Int      @id @default(autoincrement())
+  name            String
+  description     String?
+  ownerId         Int
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  currentBranchId Int?
+  branches        Branch[] @relation("RepositoryBranches")
+  commits         Commit[]
+  files           File[]
+  currentBranch   Branch?  @relation("CurrentBranch", fields: [currentBranchId], references: [id])
+  owner           User     @relation(fields: [ownerId], references: [id])
 }
 
 model File {
-  id Int @id @default(autoincrement())
-
-  filename String
-
-  content String
-
+  id           Int           @id @default(autoincrement())
+  filename     String
+  content      String
   repositoryId Int
-
-  repository Repository @relation(fields: [repositoryId], references: [id])
-
-  versions FileVersion[]
-
-  createdAt DateTime @default(now())
-
-  updatedAt DateTime @updatedAt
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  repository   Repository    @relation(fields: [repositoryId], references: [id])
+  versions     FileVersion[]
 }
 
 model Commit {
-  id Int @id @default(autoincrement())
-
-  message String
-
+  id           Int           @id @default(autoincrement())
+  message      String
   repositoryId Int
-
-  branchId Int?
-
-  repository Repository @relation(fields: [repositoryId], references: [id])
-
-  branch Branch? @relation(fields: [branchId], references: [id])
-
+  createdAt    DateTime      @default(now())
+  branchId     Int?
+  branch       Branch?       @relation(fields: [branchId], references: [id])
+  repository   Repository    @relation(fields: [repositoryId], references: [id])
   fileVersions FileVersion[]
-
-  createdAt DateTime @default(now())
 }
 
 model FileVersion {
-  id Int @id @default(autoincrement())
-
-  fileId Int
-
-  commitId Int
-
-  filename String
-
-  content String
-
-  file File @relation(fields: [fileId], references: [id])
-
-  commit Commit @relation(fields: [commitId], references: [id])
-
+  id        Int      @id @default(autoincrement())
+  fileId    Int
+  commitId  Int
+  filename  String
+  content   String
   createdAt DateTime @default(now())
+  commit    Commit   @relation(fields: [commitId], references: [id])
+  file      File     @relation(fields: [fileId], references: [id])
 }
 
 model Branch {
-  id Int @id @default(autoincrement())
+  id                 Int           @id @default(autoincrement())
+  name               String
+  repositoryId       Int
+  createdAt          DateTime      @default(now())
+  repository         Repository    @relation("RepositoryBranches", fields: [repositoryId], references: [id], onDelete: Cascade)
+  commits            Commit[]
+  sourcePullRequests PullRequest[] @relation("SourceBranch")
+  targetPullRequests PullRequest[] @relation("TargetBranch")
+  currentFor         Repository[]  @relation("CurrentBranch")
+}
 
-  name String
+model PullRequest {
+  id             Int      @id @default(autoincrement())
+  title          String
+  description    String?
+  sourceBranchId Int
+  targetBranchId Int
+  status         String   @default("OPEN")
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  sourceBranch   Branch   @relation("SourceBranch", fields: [sourceBranchId], references: [id])
+  targetBranch   Branch   @relation("TargetBranch", fields: [targetBranchId], references: [id])
 
-  repositoryId Int
-
-  repository Repository @relation(fields: [repositoryId], references: [id], onDelete: Cascade)
-
-  commits Commit[]
-
-  createdAt DateTime @default(now())
+  @@index([sourceBranchId])
+  @@index([targetBranchId])
 }
