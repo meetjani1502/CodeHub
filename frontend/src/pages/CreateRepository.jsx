@@ -1,102 +1,69 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import API from "../api/axios";
-import Navbar from "../components/layout/Navbar";
-import Sidebar from "../components/layout/Sidebar";
 
 function CreateRepository() {
+  const navigate = useNavigate();
 
-    const navigate = useNavigate();
+  const [form, setForm] = useState({
+    name: "",
+    description: "",
+  });
 
-    const [form, setForm] = useState({
-        name: "",
-        description: ""
+  const handleChange = (e) => {
+    setForm({
+      ...form,
+      [e.target.name]: e.target.value,
     });
+  };
 
-    const handleChange = (e) => {
-        setForm({
-            ...form,
-            [e.target.name]: e.target.value
-        });
-    };
+  const createRepository = async (e) => {
+    e.preventDefault();
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
+    try {
+      const response = await API.post("/repositories/create", form);
 
-        try {
+      console.log(response.data);
 
-            await API.post("/repositories/create", form);
+      navigate("/repositories");
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
-            alert("Repository Created Successfully");
+  return (
+    <div className="min-h-screen bg-[#0d1117] text-white flex justify-center items-center">
+      <div className="bg-[#161b22] border border-[#30363d] p-8 rounded-xl w-[450px]">
+        <h1 className="text-3xl font-bold mb-6">Create Repository</h1>
 
-            navigate("/repositories");
+        <form onSubmit={createRepository}>
+          <label>Repository Name</label>
 
-        } catch (err) {
+          <input
+            name="name"
+            value={form.name}
+            onChange={handleChange}
+            placeholder="my-project"
+            className="w-full mt-2 mb-5 bg-[#0d1117] border border-[#30363d] p-3 rounded-lg"
+          />
 
-            console.log(err);
+          <label>Description</label>
 
-            alert("Failed to create repository");
+          <textarea
+            name="description"
+            value={form.description}
+            onChange={handleChange}
+            placeholder="Project description"
+            className="w-full mt-2 mb-5 bg-[#0d1117] border border-[#30363d] p-3 rounded-lg"
+          />
 
-        }
-    };
-
-    return (
-
-        <div className="flex">
-
-            <Sidebar />
-
-            <div className="flex-1 bg-[#0d1117] min-h-screen text-white">
-
-                <Navbar />
-
-                <div className="max-w-2xl mx-auto mt-10">
-
-                    <h1 className="text-3xl font-bold mb-8">
-                        Create Repository
-                    </h1>
-
-                    <form
-                        onSubmit={handleSubmit}
-                        className="space-y-5"
-                    >
-
-                        <input
-                            type="text"
-                            name="name"
-                            placeholder="Repository Name"
-                            value={form.name}
-                            onChange={handleChange}
-                            className="w-full p-3 rounded bg-[#161b22] border border-gray-700"
-                            required
-                        />
-
-                        <textarea
-                            name="description"
-                            placeholder="Description"
-                            rows="4"
-                            value={form.description}
-                            onChange={handleChange}
-                            className="w-full p-3 rounded bg-[#161b22] border border-gray-700"
-                        />
-
-                        <button
-                            type="submit"
-                            className="bg-green-600 hover:bg-green-500 px-6 py-3 rounded"
-                        >
-                            Create Repository
-                        </button>
-
-                    </form>
-
-                </div>
-
-            </div>
-
-        </div>
-
-    );
-
+          <button className="w-full bg-green-600 hover:bg-green-700 py-3 rounded-lg font-bold">
+            Create Repository
+          </button>
+        </form>
+      </div>
+    </div>
+  );
 }
 
 export default CreateRepository;

@@ -76,8 +76,8 @@ export const createCommit = async (req, res) => {
     const commit = await prisma.$transaction(async (tx) => {
       const newCommit = await tx.commit.create({
         data: {
-          repositoryId: repoId,
-          branchId: finalBranchId,
+          repositoryId: Number(repositoryId),
+          branchId: Number(branchId),
           message,
         },
       });
@@ -325,6 +325,69 @@ export const getBranchCommits = async (req, res) => {
   }
 };
 
+export const getCommitsByRepository = async (req, res) => {
+  try {
+    const { repositoryId } = req.params;
+
+    const commits = await prisma.commit.findMany({
+      where: {
+        repositoryId: Number(repositoryId),
+      },
+
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
+
+    res.json({
+      success: true,
+      data: commits,
+    });
+  } catch (error) {
+    console.log(error);
+
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+export const getCommitDetail = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const commit = await prisma.commit.findUnique({
+      where: {
+        id: Number(id),
+      },
+
+      include: {
+        fileVersions: true,
+      },
+    });
+
+    if (!commit) {
+      return res.status(404).json({
+        success: false,
+        message: "Commit not found",
+      });
+    }
+
+    res.json({
+      success: true,
+
+      data: commit,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+
+      message: error.message,
+    });
+  }
+};
+
 export default {
   createCommit,
 
@@ -339,4 +402,6 @@ export default {
   getCommitDiff,
 
   getBranchCommits,
+
+  getCommitsByRepository,
 };

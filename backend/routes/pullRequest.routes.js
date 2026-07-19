@@ -1,32 +1,36 @@
 import express from "express";
 
 import {
-    createPullRequest,
-    getPullRequests,
-    approvePullRequest,
-    rejectPullRequest,
-    mergePullRequest
+  createPullRequest,
+  getPullRequests,
+  getPullRequestById,
+  approvePullRequest,
+  rejectPullRequest,
+  mergePullRequest,
+  getPullRequestDiff,
 } from "../controllers/pullRequest.controller.js";
-
 
 const router = express.Router();
 
-
-// Create PR
+// CREATE PR
 router.post("/create", createPullRequest);
 
+// GET ALL PR BY REPOSITORY
+router.get("/repository/:repositoryId", getPullRequests);
 
-// Get all PR
-router.get("/", getPullRequests);
+// GET PR DIFF
+router.get("/diff/:id", getPullRequestDiff);
 
+// GET SINGLE PR
+router.get("/:id", getPullRequestById);
 
-// Pull Request approval
+// APPROVE PR
 router.put("/:id/approve", approvePullRequest);
 
-// Pull Request rejection
+// REJECT PR
 router.put("/:id/reject", rejectPullRequest);
 
-// Pull Request merge
+// MERGE PR
 router.put("/:id/merge", mergePullRequest);
 
 export default router;
