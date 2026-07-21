@@ -139,6 +139,47 @@ export const getProfile = async (req, res) => {
   }
 };
 // ===============================
+// UPDATE OWN PROFILE
+// ===============================
+export const updateProfile = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { username, bio } = req.body;
+
+    if (!username || !username.trim()) {
+      return res.status(400).json({
+        success: false,
+        message: "Username is required",
+      });
+    }
+
+    const updatedUser = await prisma.user.update({
+      where: { id: userId },
+      data: {
+        username: username.trim(),
+      },
+      select: {
+        id: true,
+        username: true,
+        email: true,
+      },
+    });
+
+    res.status(200).json({
+      success: true,
+      message: "Profile updated successfully",
+      user: updatedUser,
+    });
+  } catch (error) {
+    console.error("UPDATE PROFILE ERROR:", error);
+
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+// ===============================
 // GET ANY USER'S PUBLIC PROFILE (by id)
 // ===============================
 export const getUserProfileById = async (req, res) => {
@@ -393,14 +434,15 @@ export const unfollowUser = async (req, res) => {
 };
 
 // ===============================
-// GET FOLLOWERS LIST
+// GET FOLLOWERS LIST (of any user, or own if no id)
 // ===============================
 export const getFollowers = async (req, res) => {
   try {
-    const userId = req.user.id;
+    const targetUserId = req.params.id ? Number(req.params.id) : req.user.id;
+    const currentUserId = req.user.id;
 
     const followers = await prisma.follow.findMany({
-      where: { followingId: userId },
+      where: { followingId: targetUserId },
       include: {
         follower: {
           select: { id: true, username: true, email: true },
@@ -408,9 +450,25 @@ export const getFollowers = async (req, res) => {
       },
     });
 
+    // Check which of these are followed by the current logged-in user
+    const currentUserFollowing = await prisma.follow.findMany({
+      where: { followerId: currentUserId },
+      select: { followingId: true },
+    });
+
+    const followingIds = new Set(
+      currentUserFollowing.map((f) => f.followingId),
+    );
+
+    const data = followers.map((f) => ({
+      ...f.follower,
+      isFollowing: followingIds.has(f.follower.id),
+      isSelf: f.follower.id === currentUserId,
+    }));
+
     res.json({
       success: true,
-      data: followers.map((f) => f.follower),
+      data,
     });
   } catch (error) {
     res.status(500).json({
@@ -421,14 +479,15 @@ export const getFollowers = async (req, res) => {
 };
 
 // ===============================
-// GET FOLLOWING LIST
+// GET FOLLOWING LIST (of any user, or own if no id)
 // ===============================
 export const getFollowing = async (req, res) => {
   try {
-    const userId = req.user.id;
+    const targetUserId = req.params.id ? Number(req.params.id) : req.user.id;
+    const currentUserId = req.user.id;
 
     const following = await prisma.follow.findMany({
-      where: { followerId: userId },
+      where: { followerId: targetUserId },
       include: {
         following: {
           select: { id: true, username: true, email: true },
@@ -436,9 +495,24 @@ export const getFollowing = async (req, res) => {
       },
     });
 
+    const currentUserFollowing = await prisma.follow.findMany({
+      where: { followerId: currentUserId },
+      select: { followingId: true },
+    });
+
+    const followingIds = new Set(
+      currentUserFollowing.map((f) => f.followingId),
+    );
+
+    const data = following.map((f) => ({
+      ...f.following,
+      isFollowing: followingIds.has(f.following.id),
+      isSelf: f.following.id === currentUserId,
+    }));
+
     res.json({
       success: true,
-      data: following.map((f) => f.following),
+      data,
     });
   } catch (error) {
     res.status(500).json({

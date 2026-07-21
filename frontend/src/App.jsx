@@ -13,6 +13,7 @@ import Commits from "./pages/Commits";
 import Settings from "./pages/Settings";
 import Explore from "./pages/Explore";
 import Profile from "./pages/Profile";
+import FollowList from "./pages/FollowList";
 function App() {
   return (
     <BrowserRouter>
@@ -44,6 +45,10 @@ function App() {
         <Route path="/explore" element={<Explore />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/profile/:id" element={<Profile />} />
+        <Route path="/profile/followers" element={<FollowList />} />
+        <Route path="/profile/following" element={<FollowList />} />
+        <Route path="/profile/:id/followers" element={<FollowList />} />
+        <Route path="/profile/:id/following" element={<FollowList />} />
       </Routes>
     </BrowserRouter>
   );

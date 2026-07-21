@@ -164,14 +164,28 @@ function Profile() {
             )}
 
             <div className="flex gap-4 mt-4 text-sm text-gray-400">
-              <span>
+              <span
+                onClick={() =>
+                  navigate(
+                    id ? `/profile/${id}/followers` : `/profile/followers`,
+                  )
+                }
+                className="cursor-pointer hover:underline"
+              >
                 <span className="text-white font-semibold">
                   {data.followersCount}
                 </span>{" "}
                 followers
               </span>
               <span>·</span>
-              <span>
+              <span
+                onClick={() =>
+                  navigate(
+                    id ? `/profile/${id}/following` : `/profile/following`,
+                  )
+                }
+                className="cursor-pointer hover:underline"
+              >
                 <span className="text-white font-semibold">
                   {data.followingCount}
                 </span>{" "}

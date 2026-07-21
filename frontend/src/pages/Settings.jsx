@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Sidebar from "../components/layout/Sidebar";
 import Navbar from "../components/layout/Navbar";
 import { useTheme } from "../context/ThemeContext";
+import API from "../api/axios";
 import {
   FaUser,
   FaLock,
@@ -13,6 +14,12 @@ import {
 function Settings() {
   const [activeTab, setActiveTab] = useState("profile");
   const { theme, toggleTheme } = useTheme();
+
+  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
+  const [saving, setSaving] = useState(false);
+  const [message, setMessage] = useState("");
+
   const tabs = [
     { id: "profile", name: "Public profile", icon: <FaUser /> },
     { id: "password", name: "Password and authentication", icon: <FaLock /> },
@@ -20,6 +27,46 @@ function Settings() {
     { id: "appearance", name: "Appearance", icon: <FaPalette /> },
     { id: "danger", name: "Danger Zone", icon: <FaTriangleExclamation /> },
   ];
+
+  useEffect(() => {
+    fetchProfile();
+  }, []);
+
+  const fetchProfile = async () => {
+    try {
+      const res = await API.get("/user/profile");
+      setUsername(res.data.user.username || "");
+      setEmail(res.data.user.email || "");
+    } catch (error) {
+      console.log(
+        "FETCH PROFILE ERROR:",
+        error.response?.data || error.message,
+      );
+    }
+  };
+
+  const handleUpdateProfile = async () => {
+    setSaving(true);
+    setMessage("");
+
+    try {
+      const res = await API.put("/user/profile", { username });
+
+      // Keep localStorage user in sync (used by Navbar avatar/initials)
+      const storedUser = JSON.parse(localStorage.getItem("user") || "{}");
+      localStorage.setItem(
+        "user",
+        JSON.stringify({ ...storedUser, username: res.data.user.username }),
+      );
+
+      setMessage("Profile updated successfully!");
+    } catch (error) {
+      setMessage(error.response?.data?.message || "Failed to update profile");
+    } finally {
+      setSaving(false);
+      setTimeout(() => setMessage(""), 3000);
+    }
+  };
 
   return (
     <div className="flex">
@@ -36,7 +83,6 @@ function Settings() {
           </p>
 
           <div className="flex gap-10">
-            {/* Secondary sidebar (GitHub-style tabs) */}
             <div className="w-64 shrink-0 border-r border-[#30363d] pr-5">
               <nav className="space-y-1">
                 {tabs.map((tab) => (
@@ -57,7 +103,6 @@ function Settings() {
               </nav>
             </div>
 
-            {/* Content area */}
             <div className="flex-1 max-w-2xl">
               {activeTab === "profile" && (
                 <div className="space-y-6">
@@ -72,6 +117,8 @@ function Settings() {
                     <input
                       type="text"
                       placeholder="your-username"
+                      value={username}
+                      onChange={(e) => setUsername(e.target.value)}
                       className="w-full bg-[#0d1117] border border-[#30363d] rounded-lg px-4 py-2 focus:outline-none focus:border-blue-500"
                     />
                   </div>
@@ -82,24 +129,30 @@ function Settings() {
                     </label>
                     <input
                       type="email"
-                      placeholder="you@example.com"
-                      className="w-full bg-[#0d1117] border border-[#30363d] rounded-lg px-4 py-2 focus:outline-none focus:border-blue-500"
+                      value={email}
+                      disabled
+                      className="w-full bg-[#0d1117] border border-[#30363d] rounded-lg px-4 py-2 opacity-60 cursor-not-allowed"
                     />
                   </div>
 
-                  <div>
-                    <label className="block text-sm text-gray-400 mb-2">
-                      Bio
-                    </label>
-                    <textarea
-                      placeholder="Tell us a little about yourself"
-                      rows={3}
-                      className="w-full bg-[#0d1117] border border-[#30363d] rounded-lg px-4 py-2 focus:outline-none focus:border-blue-500"
-                    />
-                  </div>
+                  {message && (
+                    <p
+                      className={`text-sm ${
+                        message.includes("success")
+                          ? "text-green-400"
+                          : "text-red-400"
+                      }`}
+                    >
+                      {message}
+                    </p>
+                  )}
 
-                  <button className="bg-green-600 hover:bg-green-700 px-5 py-2 rounded-lg font-semibold">
-                    Update profile
+                  <button
+                    onClick={handleUpdateProfile}
+                    disabled={saving}
+                    className="bg-green-600 hover:bg-green-700 px-5 py-2 rounded-lg font-semibold disabled:opacity-50"
+                  >
+                    {saving ? "Updating..." : "Update profile"}
                   </button>
                 </div>
               )}
