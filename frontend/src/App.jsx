@@ -11,6 +11,7 @@ import PullRequests from "./pages/PullRequests";
 import Branches from "./pages/Branches";
 import Commits from "./pages/Commits";
 import Settings from "./pages/Settings";
+import Explore from "./pages/Explore";
 function App() {
   return (
     <BrowserRouter>
@@ -39,6 +40,7 @@ function App() {
         />
         <Route path="/commits" element={<Commits />} />
         <Route path="/settings" element={<Settings />} />
+        <Route path="/explore" element={<Explore />} />
       </Routes>
     </BrowserRouter>
   );

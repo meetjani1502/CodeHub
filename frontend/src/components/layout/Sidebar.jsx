@@ -5,6 +5,7 @@ import {
   FaGear,
   FaCode,
   FaCodeMerge,
+  FaCompass,
 } from "react-icons/fa6";
 
 import { Link } from "react-router-dom";
@@ -45,6 +46,11 @@ function Sidebar() {
       name: "Settings",
       icon: <FaGear />,
       path: "/settings",
+    },
+    {
+      name: "Explore",
+      icon: <FaCompass />,
+      path: "/explore",
     },
   ];
 
