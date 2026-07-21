@@ -15,8 +15,89 @@ body{
   background:var(--bg);
   color:var(--text);
   font-family:Inter,Arial,sans-serif;
+  transition: background 0.2s ease, color 0.2s ease;
 }
 
 *{
   box-sizing:border-box;
+}
+
+/* =========================================
+   LIGHT THEME OVERRIDES
+   Overrides hardcoded Tailwind arbitrary
+   color classes when data-theme="light"
+   is set on <html>
+========================================= */
+
+[data-theme="light"] {
+  --bg:#ffffff;
+  --card:#f6f8fa;
+  --border:#d0d7de;
+  --text:#1f2328;
+  --muted:#57606a;
+}
+
+[data-theme="light"] body{
+  background: var(--bg);
+  color: var(--text);
+}
+
+/* Page / card backgrounds */
+[data-theme="light"] .bg-\[\#0d1117\]{
+  background-color: #ffffff !important;
+}
+
+[data-theme="light"] .bg-\[\#161b22\]{
+  background-color: #f6f8fa !important;
+}
+
+[data-theme="light"] .hover\:bg-\[\#161b22\]:hover{
+  background-color: #eaeef2 !important;
+}
+
+[data-theme="light"] .hover\:bg-\[\#21262d\]:hover{
+  background-color: #eaeef2 !important;
+}
+
+/* Borders */
+[data-theme="light"] .border-\[\#30363d\]{
+  border-color: #d0d7de !important;
+}
+
+/* Text colors */
+[data-theme="light"] .text-white{
+  color: #1f2328 !important;
+}
+
+[data-theme="light"] .text-gray-300{
+  color: #444c56 !important;
+}
+
+[data-theme="light"] .text-gray-400{
+  color: #57606a !important;
+}
+
+[data-theme="light"] .text-gray-500{
+  color: #6e7781 !important;
+}
+
+/* Modal overlay */
+[data-theme="light"] .bg-black\/70{
+  background-color: rgba(0,0,0,0.3) !important;
+}
+
+[data-theme="light"] .bg-black\/60{
+  background-color: rgba(0,0,0,0.3) !important;
+}
+
+/* Inputs / textareas that used bg-[#0d1117] as field bg */
+[data-theme="light"] input,
+[data-theme="light"] textarea,
+[data-theme="light"] select{
+  color: #1f2328;
+}
+
+[data-theme="light"] input::placeholder,
+[data-theme="light"] textarea::placeholder{
+  color: #8c959f;
 }
