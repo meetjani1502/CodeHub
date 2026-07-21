@@ -94,7 +94,13 @@ function Explore() {
                           <h2 className="text-xl font-semibold text-blue-400 hover:underline">
                             {repo.name}
                           </h2>
-                          <span className="text-gray-500 text-sm">
+                          <span
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              navigate(`/profile/${repo.owner?.id}`);
+                            }}
+                            className="text-gray-500 text-sm hover:underline hover:text-blue-400 cursor-pointer"
+                          >
                             by {repo.owner?.username || repo.owner?.email}
                           </span>
                         </div>
