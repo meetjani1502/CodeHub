@@ -64,6 +64,13 @@ export const getRepositories = async (req, res) => {
       where: {
         ownerId: req.user.id,
       },
+      include: {
+        _count: {
+          select: {
+            stars: true,
+          },
+        },
+      },
       orderBy: {
         createdAt: "desc",
       },
@@ -85,12 +92,16 @@ export const getRepositories = async (req, res) => {
 
 // Get Single Repository
 export const getRepositoryById = async (req, res) => {
-  try {
-    const { id } = req.params;
+  console.log("REQ PARAMS =", req.params);
 
+  const id = Number(req.params.id);
+
+  console.log("ID =", id);
+
+  try {
     const repository = await prisma.repository.findUnique({
       where: {
-        id: Number(id),
+        id: id,
       },
       include: {
         files: true,
@@ -100,20 +111,11 @@ export const getRepositoryById = async (req, res) => {
       },
     });
 
-    if (!repository) {
-      return res.status(404).json({
-        success: false,
-        message: "Repository not found",
-      });
-    }
-
-    res.status(200).json({
+    res.json({
       success: true,
       repository,
     });
   } catch (error) {
-    console.log(error);
-
     res.status(500).json({
       success: false,
       message: error.message,
@@ -201,6 +203,92 @@ export const deleteRepository = async (req, res) => {
     res.status(500).json({
       success: false,
       message: "Internal Server Error",
+    });
+  }
+};
+// Star Repository
+export const starRepository = async (req, res) => {
+  try {
+    console.log("REQ USER =", req.user);
+    console.log("REQ HEADERS =", req.headers.authorization);
+    const repoId = Number(req.params.id);
+    const userId = req.user.id;
+    const { id } = req.params;
+
+    const existingStar = await prisma.star.findFirst({
+      where: {
+        userId: req.user.id,
+        repositoryId: Number(id),
+      },
+    });
+
+    if (existingStar) {
+      return res.status(400).json({
+        success: false,
+        message: "Already starred",
+      });
+    }
+
+    const star = await prisma.star.create({
+      data: {
+        userId,
+        repositoryId: repoId,
+      },
+    });
+
+    res.status(200).json({
+      success: true,
+      message: "Repository starred",
+      star,
+    });
+  } catch (error) {
+    console.log("STAR ERROR:", error);
+
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+export const removeStar = async (req, res) => {
+  try {
+    const repositoryId = Number(req.params.id);
+    const userId = req.user.id;
+
+    console.log("REMOVE STAR REPO ID =", repositoryId);
+    console.log("REMOVE STAR USER ID =", userId);
+
+    const existingStar = await prisma.star.findFirst({
+      where: {
+        userId: userId,
+        repositoryId: repositoryId,
+      },
+    });
+
+    if (!existingStar) {
+      return res.status(400).json({
+        success: false,
+        message: "Star not found",
+      });
+    }
+
+    await prisma.star.delete({
+      where: {
+        id: existingStar.id,
+      },
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: "Star removed",
+    });
+  } catch (error) {
+    console.log("REMOVE STAR ERROR:", error);
+
+    return res.status(500).json({
+      success: false,
+      message: error.message,
     });
   }
 };

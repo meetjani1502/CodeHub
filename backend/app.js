@@ -9,7 +9,8 @@ import repositoryRoutes from "./routes/repository.routes.js";
 import commitRoutes from "./routes/commit.routes.js";
 import branchRoutes from "./routes/branch.routes.js";
 import pullRequestRoutes from "./routes/pullRequest.routes.js";
-
+import starRoutes from "./routes/star.routes.js";
+import forkRoutes from "./routes/fork.routes.js";
 dotenv.config();
 
 const app = express();
@@ -17,7 +18,8 @@ const app = express();
 // Middleware
 app.use(cors());
 app.use(express.json());
-
+//routes
+app.use("/api/auth", authRoutes);
 // Test API
 app.get("/", (req, res) => {
   res.json({
@@ -25,9 +27,6 @@ app.get("/", (req, res) => {
     message: "CodeHub Backend Running 🚀",
   });
 });
-
-// Routes
-app.use("/api/auth", authRoutes);
 
 app.use("/api/user", userRoutes);
 
@@ -38,6 +37,8 @@ app.use("/api/repositories", repositoryRoutes);
 app.use("/api/commits", commitRoutes);
 app.use("/api/branches", branchRoutes);
 app.use("/api/pullrequests", pullRequestRoutes);
+app.use("/api/stars", starRoutes);
+app.use("/api/forks", forkRoutes);
 
 // Server
 const PORT = process.env.PORT || 5000;

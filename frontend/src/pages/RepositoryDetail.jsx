@@ -97,20 +97,30 @@ function RepositoryDetail() {
         return;
       }
 
+      // Current selected branch object
+      const selectedBranch = branches.find(
+        (branch) => branch.name === currentBranch,
+      );
+
+      if (!selectedBranch) {
+        alert("Branch not found");
+        return;
+      }
+
       const response = await API.post("/files/create", {
+        name: filename,
         filename,
         content,
-        repositoryId: id,
+        repositoryId: Number(id),
+        branchId: selectedBranch.id,
       });
 
       console.log("CREATE FILE:", response.data);
 
       setFilename("");
       setContent("");
-
       setShowFileModal(false);
 
-      // refresh files
       getFiles();
     } catch (error) {
       console.log(error.response?.data || error.message);

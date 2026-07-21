@@ -8,15 +8,16 @@ datasource db {
 }
 
 model User {
-  id       Int    @id @default(autoincrement())
-  name     String
-  email    String @unique
-  password String
-
+  id        Int      @id @default(autoincrement())
+  username  String?
+  email     String   @unique
+  password  String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   repositories Repository[]
+  stars        Star[]
+  fork         Fork[]
 }
 
 model Repository {
@@ -25,34 +26,35 @@ model Repository {
   description String?
 
   ownerId Int
+  owner   User @relation(fields: [ownerId], references: [id])
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  currentBranchId Int?
-
-  owner User @relation(fields: [ownerId], references: [id])
-
-  branches Branch[] @relation("RepositoryBranches")
-
-  commits      Commit[]
   files        File[]
+  commits      Commit[]
+  branches     Branch[]      @relation("RepositoryBranches")
+  stars        Star[] 
+  fork         Fork[]
   pullRequests PullRequest[]
 
-  currentBranch Branch? @relation("CurrentBranch", fields: [currentBranchId], references: [id])
+  currentBranchId Int?
+  currentBranch   Branch? @relation("CurrentBranch", fields: [currentBranchId], references: [id])
+
+  createdAt DateTime @default(now())
 }
 
 model File {
   id       Int    @id @default(autoincrement())
+  name     String
   filename String
   content  String
 
   repositoryId Int
+  repository   Repository @relation(fields: [repositoryId], references: [id], onDelete: Cascade)
+
+  branchId Int
+  branch   Branch @relation(fields: [branchId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-
-  repository Repository @relation(fields: [repositoryId], references: [id])
 
   versions FileVersion[]
 }
@@ -88,14 +90,13 @@ model FileVersion {
 }
 
 model Branch {
-  id Int @id @default(autoincrement())
-
+  id   Int    @id @default(autoincrement())
   name String
 
   repositoryId Int
+  repository   Repository @relation("RepositoryBranches", fields: [repositoryId], references: [id], onDelete: Cascade)
 
-  repository Repository @relation("RepositoryBranches", fields: [repositoryId], references: [id])
-
+  files   File[]
   commits Commit[]
 
   sourcePullRequests PullRequest[] @relation("sourceBranch")
@@ -115,10 +116,37 @@ model PullRequest {
   sourceBranchId Int
   targetBranchId Int
 
-  repository Repository @relation(fields: [repositoryId], references: [id])
-
-  sourceBranch Branch @relation("sourceBranch", fields: [sourceBranchId], references: [id])
-  targetBranch Branch @relation("targetBranch", fields: [targetBranchId], references: [id])
+  repository   Repository @relation(fields: [repositoryId], references: [id])
+  sourceBranch Branch     @relation("sourceBranch", fields: [sourceBranchId], references: [id])
+  targetBranch Branch     @relation("targetBranch", fields: [targetBranchId], references: [id])
 
   createdAt DateTime @default(now())
+}
+
+model Star {
+  id Int @id @default(autoincrement())
+
+  userId       Int
+  repositoryId Int
+
+  user       User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  repository Repository @relation(fields: [repositoryId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@unique([userId, repositoryId])
+}
+
+model Fork {
+  id Int @id @default(autoincrement())
+
+  repositoryId Int
+  userId       Int
+
+  repository Repository @relation(fields: [repositoryId], references: [id], onDelete: Cascade)
+  user       User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@unique([repositoryId, userId])
 }

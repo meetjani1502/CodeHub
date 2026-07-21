@@ -16,7 +16,7 @@ function App() {
 
         <Route path="/repositories" element={<Repositories />} />
 
-        <Route path="/repositories/create" element={<CreateRepository />} />
+        <Route path="/create-repository" element={<CreateRepository />} />
 
         <Route path="/repository/:id" element={<RepositoryDetail />} />
 

@@ -2,13 +2,15 @@ import prisma from "../config/prisma.js";
 
 export const createFile = async (req, res) => {
   try {
-    const { filename, content, repositoryId } = req.body;
+    const { name, filename, content, repositoryId, branchId } = req.body;
 
     const file = await prisma.file.create({
       data: {
+        name,
         filename,
         content,
         repositoryId: Number(repositoryId),
+        branchId: Number(branchId),
       },
     });
 
@@ -32,7 +34,7 @@ export const getFiles = async (req, res) => {
 
     const files = await prisma.file.findMany({
       where: {
-        repositoryId,
+        repositoryId: Number(repositoryId),
       },
     });
 
