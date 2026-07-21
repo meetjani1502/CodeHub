@@ -67,7 +67,45 @@ export const createPullRequest = async (req, res) => {
 };
 
 // ===============================
-// GET ALL PULL REQUESTS
+// GET ALL PULL REQUESTS (ALL REPOSITORIES)
+// ===============================
+
+export const getAllPullRequests = async (req, res) => {
+  try {
+    const pullRequests = await prisma.pullRequest.findMany({
+      include: {
+        sourceBranch: {
+          include: {
+            repository: true,
+          },
+        },
+        targetBranch: {
+          include: {
+            repository: true,
+          },
+        },
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
+
+    res.json({
+      success: true,
+      data: pullRequests,
+    });
+  } catch (error) {
+    console.log(error);
+
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+// ===============================
+// GET ALL PULL REQUESTS (SINGLE REPOSITORY)
 // ===============================
 
 export const getPullRequests = async (req, res) => {

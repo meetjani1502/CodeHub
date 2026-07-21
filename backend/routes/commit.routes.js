@@ -2,6 +2,7 @@ import express from "express";
 
 import {
   createCommit,
+  getAllCommits,
   getCommits,
   getCommit,
   getCommitFiles,
@@ -16,6 +17,9 @@ const router = express.Router();
 
 // Create commit
 router.post("/", createCommit);
+
+// Get ALL commits (all repositories) ⭐ keep this at top
+router.get("/all", getAllCommits);
 
 // Get repository commits
 router.get("/repository/:repositoryId", getCommitsByRepository);

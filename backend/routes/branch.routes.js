@@ -3,6 +3,7 @@ import express from "express";
 import {
   createBranch,
   getBranches,
+  getAllBranches,
   deleteBranch,
   getBranchCommits,
   checkoutBranch,
@@ -15,6 +16,9 @@ const router = express.Router();
 
 // Create branch
 router.post("/create", createBranch);
+
+// Get ALL branches (all repositories)
+router.get("/all", getAllBranches);
 
 // get repository branches
 router.get("/repository/:repositoryId", getBranchesByRepository);

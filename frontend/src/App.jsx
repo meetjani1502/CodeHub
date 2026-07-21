@@ -8,6 +8,9 @@ import Repositories from "./pages/Repositories";
 import CreateRepository from "./pages/CreateRepository";
 import RepositoryDetail from "./pages/RepositoryDetail";
 import PullRequests from "./pages/PullRequests";
+import Branches from "./pages/Branches";
+import Commits from "./pages/Commits";
+import Settings from "./pages/Settings";
 function App() {
   return (
     <BrowserRouter>
@@ -20,13 +23,22 @@ function App() {
 
         <Route path="/repository/:id" element={<RepositoryDetail />} />
 
+        <Route path="/branches" element={<Branches />} />
+
         <Route path="/login" element={<Login />} />
 
         <Route path="/register" element={<Register />} />
 
         <Route path="/dashboard" element={<Dashboard />} />
 
-        <Route path="/repository/:id/pullrequests" element={<PullRequests />} />
+        <Route path="/pullrequests" element={<PullRequests />} />
+
+        <Route
+          path="/repository/:id/pullrequests"
+          element={<RepositoryDetail />}
+        />
+        <Route path="/commits" element={<Commits />} />
+        <Route path="/settings" element={<Settings />} />
       </Routes>
     </BrowserRouter>
   );

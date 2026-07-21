@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import api from "../api/axios";
 
 function RepositoryPage() {
@@ -620,6 +620,19 @@ COMMIT HISTORY
         ) : (
           <p className="text-gray-400 mt-3">No Pull Requests Found</p>
         )}
+      </div>
+      {/* =========================
+GO TO BRANCHES
+========================= */}
+
+      <div className="mt-5">
+        <Link
+          to={`/repository/${id}/branches`}
+          className="bg-purple-600 px-5 py-2 rounded inline-block"
+        >
+          View Branches 🌿
+        </Link>
+        <Link to={`/repository/${id}/branches`}>Branches 🌿</Link>
       </div>
     </div>
   );

@@ -26,6 +26,31 @@ export const createBranch = async (req, res) => {
   }
 };
 
+// Get ALL branches (all repositories)
+export const getAllBranches = async (req, res) => {
+  try {
+    const branches = await prisma.branch.findMany({
+      include: {
+        repository: true,
+      },
+      orderBy: {
+        id: "desc",
+      },
+    });
+
+    res.status(200).json({
+      success: true,
+      data: branches,
+    });
+  } catch (error) {
+    console.error(error);
+
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
 // Get all branches of repository
 export const getBranches = async (req, res) => {
   try {
@@ -59,22 +84,24 @@ export const getBranches = async (req, res) => {
 
 export const getBranchesByRepository = async (req, res) => {
   try {
-    const { repositoryId } = req.params;
+    console.log("PARAMS:", req.params);
+
+    const repositoryId = Number(req.params.repositoryId);
 
     const branches = await prisma.branch.findMany({
       where: {
-        repositoryId: Number(repositoryId),
+        repositoryId: repositoryId,
       },
     });
 
-    res.json({
+    return res.status(200).json({
       success: true,
       data: branches,
     });
   } catch (error) {
-    console.log(error);
+    console.log("GET BRANCH ERROR:", error);
 
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       message: error.message,
     });

@@ -2,6 +2,7 @@ import express from "express";
 
 import {
   createPullRequest,
+  getAllPullRequests,
   getPullRequests,
   getPullRequestById,
   approvePullRequest,
@@ -14,6 +15,9 @@ const router = express.Router();
 
 // CREATE PR
 router.post("/create", createPullRequest);
+
+// GET ALL PR (ALL REPOSITORIES)
+router.get("/all", getAllPullRequests);
 
 // GET ALL PR BY REPOSITORY
 router.get("/repository/:repositoryId", getPullRequests);

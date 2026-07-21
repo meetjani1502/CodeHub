@@ -110,6 +110,32 @@ export const createCommit = async (req, res) => {
     });
   }
 };
+// Get ALL commits (all repositories)
+export const getAllCommits = async (req, res) => {
+  try {
+    const commits = await prisma.commit.findMany({
+      include: {
+        repository: true,
+        branch: true,
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
+
+    res.json({
+      success: true,
+      data: commits,
+    });
+  } catch (error) {
+    console.error(error);
+
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
 
 // Get all commits of repository
 export const getCommits = async (req, res) => {
@@ -390,18 +416,12 @@ export const getCommitDetail = async (req, res) => {
 
 export default {
   createCommit,
-
+  getAllCommits, // 👈 ye add karo
   getCommits,
-
   getCommit,
-
   getCommitFiles,
-
   restoreCommit,
-
   getCommitDiff,
-
   getBranchCommits,
-
   getCommitsByRepository,
 };
