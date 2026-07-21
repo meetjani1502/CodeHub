@@ -21,6 +21,7 @@ model User {
 
   followers Follow[] @relation("Followers")
   following Follow[] @relation("Following")
+   issues    Issue[]
 }
 
 model Repository {
@@ -37,6 +38,7 @@ model Repository {
   stars        Star[] 
   fork         Fork[]
   pullRequests PullRequest[]
+  issues       Issue[]
 
   currentBranchId Int?
   currentBranch   Branch? @relation("CurrentBranch", fields: [currentBranchId], references: [id])
@@ -165,4 +167,19 @@ model Follow {
   createdAt DateTime @default(now())
 
   @@unique([followerId, followingId])
+}
+model Issue {
+  id          Int     @id @default(autoincrement())
+  title       String
+  description String?
+  status      String  @default("OPEN")
+
+  repositoryId Int
+  repository   Repository @relation(fields: [repositoryId], references: [id], onDelete: Cascade)
+
+  authorId Int?
+  author   User? @relation(fields: [authorId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }

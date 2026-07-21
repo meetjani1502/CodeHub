@@ -6,6 +6,7 @@ import {
   FaCode,
   FaCodeMerge,
   FaCompass,
+  FaCircleExclamation,
 } from "react-icons/fa6";
 
 import { Link } from "react-router-dom";
@@ -35,7 +36,11 @@ function Sidebar() {
       icon: <FaCodeMerge />,
       path: "/pullrequests",
     },
-
+    {
+      name: "Issues",
+      icon: <FaCircleExclamation />,
+      path: "/issues",
+    },
     {
       name: "Commits",
       icon: <FaGear />,

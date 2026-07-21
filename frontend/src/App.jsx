@@ -14,6 +14,7 @@ import Settings from "./pages/Settings";
 import Explore from "./pages/Explore";
 import Profile from "./pages/Profile";
 import FollowList from "./pages/FollowList";
+import Issues from "./pages/Issues";
 function App() {
   return (
     <BrowserRouter>
@@ -49,6 +50,7 @@ function App() {
         <Route path="/profile/following" element={<FollowList />} />
         <Route path="/profile/:id/followers" element={<FollowList />} />
         <Route path="/profile/:id/following" element={<FollowList />} />
+        <Route path="/issues" element={<Issues />} />
       </Routes>
     </BrowserRouter>
   );

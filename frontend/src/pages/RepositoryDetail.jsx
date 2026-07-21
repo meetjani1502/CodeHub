@@ -2,7 +2,8 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate, data } from "react-router-dom";
 import API from "../api/axios";
 import { GitBranch, File, GitCommit, Plus, GitPullRequest } from "lucide-react";
-
+import StatusBadge from "../components/common/StatusBadge";
+import { FaCircleExclamation } from "react-icons/fa6";
 function RepositoryDetail() {
   const { id } = useParams();
 
@@ -45,6 +46,14 @@ function RepositoryDetail() {
   const [targetBranch, setTargetBranch] = useState("");
 
   const [pullRequests, setPullRequests] = useState([]);
+
+  const [issues, setIssues] = useState([]);
+
+  const [showIssueModal, setShowIssueModal] = useState(false);
+
+  const [issueTitle, setIssueTitle] = useState("");
+
+  const [issueDescription, setIssueDescription] = useState("");
 
   const openFile = (file) => {
     console.log("SELECTED FILE:", file);
@@ -187,6 +196,52 @@ function RepositoryDetail() {
       console.log("PR FETCH ERROR:", error.response?.data || error.message);
     }
   };
+  const getIssues = async () => {
+    try {
+      const response = await API.get(`/issues/repository/${id}`);
+      setIssues(response.data.data);
+    } catch (error) {
+      console.log("ISSUES FETCH ERROR:", error.response?.data || error.message);
+    }
+  };
+
+  const createIssue = async () => {
+    try {
+      if (!issueTitle.trim()) {
+        alert("Title required");
+        return;
+      }
+
+      await API.post("/issues/create", {
+        title: issueTitle,
+        description: issueDescription,
+        repositoryId: id,
+      });
+
+      setIssueTitle("");
+      setIssueDescription("");
+      setShowIssueModal(false);
+
+      await getIssues();
+    } catch (error) {
+      console.log("CREATE ISSUE ERROR:", error.response?.data || error.message);
+    }
+  };
+
+  const toggleIssueStatus = async (issue) => {
+    try {
+      const endpoint =
+        issue.status === "OPEN"
+          ? `/issues/${issue.id}/close`
+          : `/issues/${issue.id}/reopen`;
+
+      await API.put(endpoint);
+
+      await getIssues();
+    } catch (error) {
+      console.log("TOGGLE ISSUE ERROR:", error.response?.data || error.message);
+    }
+  };
   const createBranch = async () => {
     try {
       if (!branchName.trim()) {
@@ -260,6 +315,7 @@ function RepositoryDetail() {
     getCommits();
     getBranches();
     getPullRequests();
+    getIssues();
   }, [id]);
 
   useEffect(() => {
@@ -315,17 +371,24 @@ function RepositoryDetail() {
           <button
             onClick={() => setShowPRModal(true)}
             className="
-  bg-purple-600
-  px-5
-  py-2
-  rounded-lg
-  flex
-  gap-2
-  items-center
-  "
+bg-purple-600
+px-5
+py-2
+rounded-lg
+flex
+gap-2
+items-center
+"
           >
             <GitPullRequest size={20} />
             Create PR
+          </button>
+          <button
+            onClick={() => setShowIssueModal(true)}
+            className="btn-secondary flex gap-2 items-center"
+          >
+            <FaCircleExclamation />
+            New Issue
           </button>
         </div>
       </div>
@@ -612,6 +675,42 @@ rounded-lg
         </div>
       </section>
 
+      {/* ================= CREATE ISSUE MODAL ================= */}
+
+      {showIssueModal && (
+        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
+          <div className="bg-[#161b22] border border-[#30363d] rounded-xl w-[500px] p-8">
+            <h2 className="text-2xl font-bold mb-5">New Issue</h2>
+
+            <input
+              placeholder="Issue Title"
+              value={issueTitle}
+              onChange={(e) => setIssueTitle(e.target.value)}
+              className="w-full bg-[#0d1117] border border-[#30363d] p-3 rounded-lg mb-4"
+            />
+
+            <textarea
+              placeholder="Description"
+              value={issueDescription}
+              onChange={(e) => setIssueDescription(e.target.value)}
+              className="w-full h-32 bg-[#0d1117] border border-[#30363d] p-3 rounded-lg mb-4"
+            />
+
+            <div className="flex justify-end gap-4">
+              <button
+                onClick={() => setShowIssueModal(false)}
+                className="btn-secondary"
+              >
+                Cancel
+              </button>
+
+              <button onClick={createIssue} className="btn-primary">
+                Submit new issue
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
       {/* Pull Requests */}
 
       <section className="mt-10">
@@ -748,7 +847,48 @@ p-5
           )}
         </div>
       </section>
+      {/* Issues */}
 
+      <section className="mt-10">
+        <h2 className="text-2xl font-bold mb-5 flex gap-2 items-center">
+          <FaCircleExclamation />
+          Issues
+        </h2>
+
+        <div className="space-y-4">
+          {issues.length === 0 ? (
+            <p className="text-gray-400">No Issues</p>
+          ) : (
+            issues.map((issue) => (
+              <div key={issue.id} className="gh-card p-5">
+                <div className="flex justify-between items-start">
+                  <div>
+                    <h3 className="text-xl font-bold">{issue.title}</h3>
+                    <p className="text-gray-400 mt-2">{issue.description}</p>
+                    <p className="text-gray-500 text-xs mt-2">
+                      #{issue.id} opened by{" "}
+                      {issue.author?.username || issue.author?.email}
+                    </p>
+                  </div>
+
+                  <StatusBadge status={issue.status} />
+                </div>
+
+                <div className="mt-4">
+                  <button
+                    onClick={() => toggleIssueStatus(issue)}
+                    className={
+                      issue.status === "OPEN" ? "btn-danger" : "btn-secondary"
+                    }
+                  >
+                    {issue.status === "OPEN" ? "Close issue" : "Reopen issue"}
+                  </button>
+                </div>
+              </div>
+            ))
+          )}
+        </div>
+      </section>
       {/* Commits */}
 
       <section className="mt-10">

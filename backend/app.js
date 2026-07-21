@@ -11,6 +11,7 @@ import branchRoutes from "./routes/branch.routes.js";
 import pullRequestRoutes from "./routes/pullRequest.routes.js";
 import starRoutes from "./routes/star.routes.js";
 import forkRoutes from "./routes/fork.routes.js";
+import issueRoutes from "./routes/issue.routes.js";
 dotenv.config();
 
 const app = express();
@@ -39,7 +40,7 @@ app.use("/api/branches", branchRoutes);
 app.use("/api/pullrequests", pullRequestRoutes);
 app.use("/api/stars", starRoutes);
 app.use("/api/forks", forkRoutes);
-
+app.use("/api/issues", issueRoutes);
 // Server
 const PORT = process.env.PORT || 5000;
 
