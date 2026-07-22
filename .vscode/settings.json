@@ -11,5 +11,6 @@
             "password": "root",
             "name": "MyDBConnection"
         }
-    ]
+    ],
+    "workbench.externalBrowser": "chrome"
 }
