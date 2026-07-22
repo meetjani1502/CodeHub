@@ -46,7 +46,7 @@ function Commits() {
                 className="bg-[#161b22] border border-[#30363d] rounded-xl p-5 mb-4 cursor-pointer hover:bg-[#21262d] transition"
               >
                 <div className="flex justify-between items-center">
-                  <h2 className="text-lg font-bold">📝 {commit.message}</h2>
+                  <h2 className="text-lg font-bold">{commit.message}</h2>
                   <span className="text-sm text-blue-400">
                     {commit.repository?.name || "Unknown Repository"}
                   </span>

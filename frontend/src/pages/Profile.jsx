@@ -289,7 +289,7 @@ function Profile() {
                     className="bg-[#161b22] border border-[#30363d] rounded-lg p-4 cursor-pointer hover:bg-[#21262d] transition"
                   >
                     <p className="text-sm">
-                      {item.type === "REPO_CREATED" ? "📦 " : "📝 "}
+                      {item.type === "REPO_CREATED" ? "📦 " : " "}
                       {item.message}
                     </p>
                     <p className="text-xs text-gray-500 mt-1">

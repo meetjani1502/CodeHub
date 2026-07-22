@@ -59,7 +59,7 @@ function Branches() {
                   "
               >
                 <div className="flex justify-between items-center">
-                  <h2 className="text-xl">🌿 {branch.name}</h2>
+                  <h2 className="text-xl">{branch.name}</h2>
                   <span className="text-sm text-blue-400">
                     {branch.repository?.name || "Unknown Repository"}
                   </span>

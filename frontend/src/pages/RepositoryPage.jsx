@@ -269,7 +269,7 @@ BRANCH LIST
             key={branch.id}
             className="bg-[#161b22] p-3 mt-3 rounded flex justify-between"
           >
-            <p>🌿 {branch.name}</p>
+            <p>{branch.name}</p>
 
             <button
               className="bg-blue-600 px-4 py-1 rounded"
@@ -630,9 +630,9 @@ GO TO BRANCHES
           to={`/repository/${id}/branches`}
           className="bg-purple-600 px-5 py-2 rounded inline-block"
         >
-          View Branches 🌿
+          View Branches
         </Link>
-        <Link to={`/repository/${id}/branches`}>Branches 🌿</Link>
+        <Link to={`/repository/${id}/branches`}>Branches </Link>
       </div>
     </div>
   );
