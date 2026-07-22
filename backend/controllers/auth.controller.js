@@ -30,7 +30,7 @@ export const registerUser = async (req, res) => {
 
     const user = await prisma.user.create({
       data: {
-        name,
+        username: name,
         email,
         password: hashedPassword,
       },
@@ -41,7 +41,7 @@ export const registerUser = async (req, res) => {
       message: "User registered successfully",
       user: {
         id: user.id,
-        name: user.name,
+        name: user.username,
         email: user.email,
       },
     });
@@ -113,6 +113,14 @@ export const loginUser = async (req, res) => {
         device: userAgent,
         ipAddress,
       },
+    });
+
+    // Set httpOnly cookie
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: false, // production mein true karna (HTTPS ke sath)
+      sameSite: "lax",
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     });
 
     return res.status(200).json({
