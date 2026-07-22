@@ -62,7 +62,7 @@ function Sidebar() {
   return (
     <aside className="w-64 bg-[#161b22] border-r border-[#30363d] min-h-screen">
       <div className="p-6">
-        <h1 className="text-2xl font-bold">🚀 CodeHub</h1>
+        <h1 className="text-2xl font-bold">CodeHub</h1>
       </div>
 
       <nav>

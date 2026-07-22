@@ -14,8 +14,37 @@ function Navbar() {
   const [user, setUser] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [menuOpen, setMenuOpen] = useState(false);
+
   const menuRef = useRef(null);
   const navigate = useNavigate();
+
+  const handleSearch = (e) => {
+    if (e.key === "Enter") {
+      navigate(`/repositories?search=${encodeURIComponent(searchTerm.trim())}`);
+    }
+  };
+
+  const getInitial = () => {
+    if (!user) return "U";
+    const name = user.username || user.email || "U";
+    return name.charAt(0).toUpperCase();
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem("user");
+    localStorage.removeItem("token");
+    navigate("/login");
+  };
+
+  useEffect(() => {
+    //reset the searchTerm
+    const params = new URLSearchParams(window.location.search);
+    const search = params.get("search");
+    const id = params.get("id");
+
+    setSearchTerm(search ?? "");
+    console.log({ search, id });
+  }, []);
 
   useEffect(() => {
     const data = localStorage.getItem("user");
@@ -36,24 +65,6 @@ function Navbar() {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
-
-  const handleSearch = (e) => {
-    if (e.key === "Enter" && searchTerm.trim()) {
-      navigate(`/repositories?search=${encodeURIComponent(searchTerm.trim())}`);
-    }
-  };
-
-  const getInitial = () => {
-    if (!user) return "U";
-    const name = user.username || user.email || "U";
-    return name.charAt(0).toUpperCase();
-  };
-
-  const handleLogout = () => {
-    localStorage.removeItem("user");
-    localStorage.removeItem("token");
-    navigate("/login");
-  };
 
   return (
     <header className="h-16 bg-[#161b22] border-b border-[#30363d] flex items-center justify-between px-8 relative">

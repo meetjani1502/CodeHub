@@ -1,5 +1,4 @@
-import { Link } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 
 import {
   GitBranch,
@@ -13,6 +12,12 @@ import {
 
 function Home() {
   const navigate = useNavigate();
+
+  const token = localStorage.getItem("token");
+
+  if (token) {
+    return <Navigate to="/dashboard" replace />;
+  }
   return (
     <div className="min-h-screen bg-[#0d1117] text-white">
       {/* ================= NAVBAR ================= */}
@@ -67,7 +72,7 @@ function Home() {
 
           <div>
             <span className="bg-[#161b22] border border-[#30363d] px-4 py-2 rounded-full text-green-400 text-sm">
-              🚀 Build Your Own GitHub
+              Build Your Own GitHub
             </span>
 
             <h1 className="text-6xl font-extrabold leading-tight mt-8">
