@@ -521,3 +521,59 @@ export const getFollowing = async (req, res) => {
     });
   }
 };
+// ===============================
+// GET MY SESSIONS
+// ===============================
+export const getMySessions = async (req, res) => {
+  try {
+    const sessions = await prisma.session.findMany({
+      where: { userId: req.user.id },
+      orderBy: { createdAt: "desc" },
+    });
+
+    res.json({
+      success: true,
+      data: sessions,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+// ===============================
+// REVOKE A SESSION
+// ===============================
+export const revokeSession = async (req, res) => {
+  try {
+    const sessionId = Number(req.params.id);
+
+    const session = await prisma.session.findUnique({
+      where: { id: sessionId },
+    });
+
+    if (!session || session.userId !== req.user.id) {
+      return res.status(404).json({
+        success: false,
+        message: "Session not found",
+      });
+    }
+
+    await prisma.session.update({
+      where: { id: sessionId },
+      data: { revokedAt: new Date() },
+    });
+
+    res.json({
+      success: true,
+      message: "Session revoked",
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};

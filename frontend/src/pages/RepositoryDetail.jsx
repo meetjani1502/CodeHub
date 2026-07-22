@@ -1,9 +1,10 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useParams, useNavigate, data } from "react-router-dom";
 import API from "../api/axios";
 import { GitBranch, File, GitCommit, Plus, GitPullRequest } from "lucide-react";
 import StatusBadge from "../components/common/StatusBadge";
 import { FaCircleExclamation } from "react-icons/fa6";
+
 function RepositoryDetail() {
   const { id } = useParams();
 
@@ -55,6 +56,8 @@ function RepositoryDetail() {
 
   const [issueDescription, setIssueDescription] = useState("");
 
+  const fileInputRef = useRef(null);
+
   const openFile = (file) => {
     console.log("SELECTED FILE:", file);
     setSelectedFile(file);
@@ -98,6 +101,32 @@ function RepositoryDetail() {
     } catch (error) {
       console.log("UPDATE FILE ERROR:", error.response?.data || error.message);
     }
+  };
+  const handleFileSelect = (e) => {
+    const selectedFile = e.target.files[0];
+
+    if (!selectedFile) return;
+
+    const reader = new FileReader();
+
+    reader.onload = (event) => {
+      setFilename(selectedFile.name);
+      setContent(event.target.result);
+      setShowFileModal(true);
+    };
+
+    reader.onerror = () => {
+      alert("Failed to read file");
+    };
+
+    reader.readAsText(selectedFile);
+
+    // Reset input so selecting the same file again still triggers onChange
+    e.target.value = "";
+  };
+
+  const triggerFileUpload = () => {
+    fileInputRef.current.click();
   };
   const createFile = async () => {
     try {
@@ -369,26 +398,32 @@ function RepositoryDetail() {
             Add File
           </button>
           <button
-            onClick={() => setShowPRModal(true)}
-            className="
-bg-purple-600
-px-5
-py-2
-rounded-lg
-flex
-gap-2
-items-center
-"
+            onClick={triggerFileUpload}
+            className="btn-secondary flex gap-2 items-center"
           >
-            <GitPullRequest size={20} />
-            Create PR
+            <Plus size={18} />
+            Upload File
           </button>
+
+          <input
+            type="file"
+            ref={fileInputRef}
+            onChange={handleFileSelect}
+            className="hidden"
+          />
           <button
             onClick={() => setShowIssueModal(true)}
             className="btn-secondary flex gap-2 items-center"
           >
             <FaCircleExclamation />
             New Issue
+          </button>
+          <button
+            onClick={() => setShowPRModal(true)}
+            className="btn-primary flex gap-2 items-center"
+          >
+            <GitPullRequest size={18} />
+            Create PR
           </button>
         </div>
       </div>

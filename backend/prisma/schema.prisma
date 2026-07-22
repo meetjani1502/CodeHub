@@ -22,6 +22,7 @@ model User {
   followers Follow[] @relation("Followers")
   following Follow[] @relation("Following")
    issues    Issue[]
+   sessions  Session[]
 }
 
 model Repository {
@@ -182,4 +183,17 @@ model Issue {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+model Session {
+  id Int @id @default(autoincrement())
+
+  userId Int
+  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  token     String
+  device    String?
+  ipAddress String?
+
+  createdAt DateTime  @default(now())
+  revokedAt DateTime?
 }

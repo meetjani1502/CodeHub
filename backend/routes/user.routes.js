@@ -8,6 +8,8 @@ import {
   unfollowUser,
   getFollowers,
   getFollowing,
+  getMySessions,
+  revokeSession,
 } from "../controllers/user.controller.js";
 
 const router = express.Router();
@@ -33,4 +35,7 @@ router.get("/following", authMiddleware, getFollowing);
 router.get("/followers/:id", authMiddleware, getFollowers);
 router.get("/following/:id", authMiddleware, getFollowing);
 
+// Sessions
+router.get("/sessions", authMiddleware, getMySessions);
+router.put("/sessions/:id/revoke", authMiddleware, revokeSession);
 export default router;
