@@ -1,0 +1,20 @@
+{
+  "name": "codehub-cli",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "CLI tool to push local files to CodeHub repositories",
+  "main": "index.js",
+  "bin": {
+    "codehub": "./index.js"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^1.18.1",
+    "chalk": "^5.6.2"
+  }
+}
