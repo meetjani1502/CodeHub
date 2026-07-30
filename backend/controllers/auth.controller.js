@@ -4,9 +4,9 @@ import prisma from "../config/database.js";
 
 export const registerUser = async (req, res) => {
   try {
-    const { name, email, password } = req.body;
+    const { username, email, password } = req.body;
 
-    if (!name || !email || !password) {
+    if (!username || !email || !password) {
       return res.status(400).json({
         success: false,
         message: "All fields are required",
@@ -30,7 +30,7 @@ export const registerUser = async (req, res) => {
 
     const user = await prisma.user.create({
       data: {
-        username: name,
+        username,
         email,
         password: hashedPassword,
       },
@@ -41,12 +41,12 @@ export const registerUser = async (req, res) => {
       message: "User registered successfully",
       user: {
         id: user.id,
-        name: user.username,
+        username: user.username,
         email: user.email,
       },
     });
   } catch (error) {
-    console.error(error);
+    console.error("Register Error:", error);
 
     return res.status(500).json({
       success: false,
@@ -99,8 +99,8 @@ export const loginUser = async (req, res) => {
       },
     );
 
-    // Create session entry
     const userAgent = req.headers["user-agent"] || "Unknown device";
+
     const ipAddress =
       req.headers["x-forwarded-for"]?.split(",")[0] ||
       req.socket?.remoteAddress ||
@@ -115,12 +115,11 @@ export const loginUser = async (req, res) => {
       },
     });
 
-    // Set httpOnly cookie
     res.cookie("token", token, {
       httpOnly: true,
-      secure: false, // production mein true karna (HTTPS ke sath)
+      secure: false,
       sameSite: "lax",
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+      maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
     return res.status(200).json({
@@ -129,12 +128,12 @@ export const loginUser = async (req, res) => {
       token,
       user: {
         id: user.id,
-        name: user.username,
+        username: user.username,
         email: user.email,
       },
     });
   } catch (error) {
-    console.error(error);
+    console.error("Login Error:", error);
 
     return res.status(500).json({
       success: false,

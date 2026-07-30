@@ -1,6 +1,9 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
+import cookieParser from "cookie-parser";
+
+import prisma from "./config/prisma.js";
 
 import authRoutes from "./routes/auth.routes.js";
 import userRoutes from "./routes/user.routes.js";
@@ -12,7 +15,7 @@ import pullRequestRoutes from "./routes/pullRequest.routes.js";
 import starRoutes from "./routes/star.routes.js";
 import forkRoutes from "./routes/fork.routes.js";
 import issueRoutes from "./routes/issue.routes.js";
-import cookieParser from "cookie-parser";
+
 dotenv.config();
 
 const app = express();
@@ -50,7 +53,14 @@ app.use("/api/forks", forkRoutes);
 app.use("/api/issues", issueRoutes);
 // Server
 const PORT = process.env.PORT || 5000;
-
+prisma
+  .$connect()
+  .then(() => {
+    console.log("Database connected");
+  })
+  .catch((err) => {
+    console.log("Database connection failed:", err);
+  });
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
 });
