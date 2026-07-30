@@ -23,7 +23,7 @@ const app = express();
 // Middleware
 app.use(
   cors({
-    origin: "https://codehub.vercel.app",
+    origin: "https://code-j8u630wkf-meet-s-projects10.vercel.app",
     credentials: true,
   }),
 );
