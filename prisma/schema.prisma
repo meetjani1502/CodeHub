@@ -1,0 +1,199 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  username  String?
+  email     String   @unique
+  password  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  repositories Repository[]
+  stars        Star[]
+  fork         Fork[]
+
+  followers Follow[] @relation("Followers")
+  following Follow[] @relation("Following")
+   issues    Issue[]
+   sessions  Session[]
+}
+
+model Repository {
+  id          Int     @id @default(autoincrement())
+  name        String
+  description String?
+
+  ownerId Int
+  owner   User @relation(fields: [ownerId], references: [id])
+
+  files        File[]
+  commits      Commit[]
+  branches     Branch[]      @relation("RepositoryBranches")
+  stars        Star[] 
+  fork         Fork[]
+  pullRequests PullRequest[]
+  issues       Issue[]
+
+  currentBranchId Int?
+  currentBranch   Branch? @relation("CurrentBranch", fields: [currentBranchId], references: [id])
+
+  createdAt DateTime @default(now())
+}
+
+model File {
+  id       Int    @id @default(autoincrement())
+  name     String
+  filename String
+  content  String
+
+  repositoryId Int
+  repository   Repository @relation(fields: [repositoryId], references: [id], onDelete: Cascade)
+
+  branchId Int
+  branch   Branch @relation(fields: [branchId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  versions FileVersion[]
+}
+
+model Commit {
+  id      Int    @id @default(autoincrement())
+  message String
+
+  repositoryId Int
+  branchId     Int?
+
+  createdAt DateTime @default(now())
+
+  repository Repository @relation(fields: [repositoryId], references: [id])
+  branch     Branch?    @relation(fields: [branchId], references: [id])
+
+  fileVersions FileVersion[]
+}
+
+model FileVersion {
+  id Int @id @default(autoincrement())
+
+  fileId   Int
+  commitId Int
+
+  filename String
+  content  String
+
+  createdAt DateTime @default(now())
+
+  file   File   @relation(fields: [fileId], references: [id])
+  commit Commit @relation(fields: [commitId], references: [id])
+}
+
+model Branch {
+  id   Int    @id @default(autoincrement())
+  name String
+
+  repositoryId Int
+  repository   Repository @relation("RepositoryBranches", fields: [repositoryId], references: [id], onDelete: Cascade)
+
+  files   File[]
+  commits Commit[]
+
+  sourcePullRequests PullRequest[] @relation("sourceBranch")
+  targetPullRequests PullRequest[] @relation("targetBranch")
+
+  currentRepositories Repository[] @relation("CurrentBranch")
+}
+
+model PullRequest {
+  id          Int     @id @default(autoincrement())
+  title       String
+  description String?
+
+  status String @default("OPEN")
+
+  repositoryId   Int
+  sourceBranchId Int
+  targetBranchId Int
+
+  repository   Repository @relation(fields: [repositoryId], references: [id])
+  sourceBranch Branch     @relation("sourceBranch", fields: [sourceBranchId], references: [id])
+  targetBranch Branch     @relation("targetBranch", fields: [targetBranchId], references: [id])
+
+  createdAt DateTime @default(now())
+}
+
+model Star {
+  id Int @id @default(autoincrement())
+
+  userId       Int
+  repositoryId Int
+
+  user       User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  repository Repository @relation(fields: [repositoryId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@unique([userId, repositoryId])
+}
+
+model Fork {
+  id Int @id @default(autoincrement())
+
+  repositoryId Int
+  userId       Int
+
+  repository Repository @relation(fields: [repositoryId], references: [id], onDelete: Cascade)
+  user       User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@unique([repositoryId, userId])
+}
+model Follow {
+  id Int @id @default(autoincrement())
+
+  followerId  Int
+  followingId Int
+
+  follower  User @relation("Following", fields: [followerId], references: [id], onDelete: Cascade)
+  following User @relation("Followers", fields: [followingId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@unique([followerId, followingId])
+}
+model Issue {
+  id          Int     @id @default(autoincrement())
+  title       String
+  description String?
+  status      String  @default("OPEN")
+
+  repositoryId Int
+  repository   Repository @relation(fields: [repositoryId], references: [id], onDelete: Cascade)
+
+  authorId Int?
+  author   User? @relation(fields: [authorId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+model Session {
+  id Int @id @default(autoincrement())
+
+  userId Int
+  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  token     String
+  device    String?
+  ipAddress String?
+
+  createdAt DateTime  @default(now())
+  revokedAt DateTime?
+}
