@@ -20,24 +20,48 @@ dotenv.config();
 
 const app = express();
 
-// Middleware
+// --------------------
+// CORS Configuration
+// --------------------
+
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://code-j8u630wkf-meet-s-projects10.vercel.app",
+];
+
 app.use(
   cors({
-    origin: "https://codehub.vercel.app",
+    origin: (origin, callback) => {
+      if (!origin) {
+        return callback(null, true);
+      }
+
+      if (allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      }
+
+      callback(new Error("CORS blocked"));
+    },
+
     credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
   }),
 );
+
+// --------------------
+// Middleware
+// --------------------
+
 app.use(cookieParser());
+
 app.use(express.json());
-//routes
+
+// --------------------
+// Routes
+// --------------------
+
 app.use("/api/auth", authRoutes);
-// Test API
-app.get("/", (req, res) => {
-  res.json({
-    success: true,
-    message: "CodeHub Backend Running 🚀",
-  });
-});
 
 app.use("/api/user", userRoutes);
 
@@ -46,21 +70,61 @@ app.use("/api/files", fileRoutes);
 app.use("/api/repositories", repositoryRoutes);
 
 app.use("/api/commits", commitRoutes);
+
 app.use("/api/branches", branchRoutes);
+
 app.use("/api/pullrequests", pullRequestRoutes);
+
 app.use("/api/stars", starRoutes);
+
 app.use("/api/forks", forkRoutes);
+
 app.use("/api/issues", issueRoutes);
-// Server
-const PORT = process.env.PORT || 5000;
-prisma
-  .$connect()
-  .then(() => {
-    console.log("Database connected");
-  })
-  .catch((err) => {
-    console.log("Database connection failed:", err);
+
+// --------------------
+// Health Check
+// --------------------
+
+app.get("/", (req, res) => {
+  res.json({
+    success: true,
+    message: "CodeHub Backend Running 🚀",
   });
-app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
 });
+
+// --------------------
+// Error Handler
+// --------------------
+
+app.use((err, req, res, next) => {
+  console.log("SERVER ERROR:", err.message);
+
+  res.status(500).json({
+    success: false,
+    message: err.message,
+  });
+});
+
+// --------------------
+// Database + Server
+// --------------------
+
+const PORT = process.env.PORT || 5000;
+
+async function startServer() {
+  try {
+    await prisma.$connect();
+
+    console.log("Database connected ✅");
+
+    app.listen(PORT, () => {
+      console.log(`Server running on port ${PORT} 🚀`);
+    });
+  } catch (error) {
+    console.log("Database connection failed ❌", error.message);
+
+    process.exit(1);
+  }
+}
+
+startServer();
