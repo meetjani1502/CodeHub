@@ -20,71 +20,43 @@ dotenv.config();
 
 const app = express();
 
-// --------------------
-// CORS Configuration
-// --------------------
-
+// Middleware
 const allowedOrigins = [
   "http://localhost:5173",
   "https://code-j8u630wkf-meet-s-projects10.vercel.app",
-];
+  process.env.FRONTEND_URL, // set this in Render env vars for your stable frontend domain
+].filter(Boolean); // removes undefined if FRONTEND_URL isn't set
 
 app.use(
   cors({
-    origin: (origin, callback) => {
-      if (!origin) {
-        return callback(null, true);
-      }
+    origin: function (origin, callback) {
+      // allow requests with no origin (like curl, mobile apps, server-to-server)
+      if (!origin) return callback(null, true);
 
       if (allowedOrigins.includes(origin)) {
         return callback(null, true);
       }
 
-      callback(new Error("CORS blocked"));
+      console.log("Blocked by CORS:", origin);
+      return callback(new Error("Not allowed by CORS"));
     },
-
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
   }),
 );
 
-// --------------------
-// Middleware
-// --------------------
+// NOTE: removed app.options("*", cors()) — it crashes on Express 5 / newer
+// path-to-regexp because "*" is no longer a valid bare wildcard path.
+// The cors() middleware above already handles OPTIONS preflight requests.
 
 app.use(cookieParser());
-
 app.use(express.json());
 
-// --------------------
-// Routes
-// --------------------
-
+// routes
 app.use("/api/auth", authRoutes);
 
-app.use("/api/user", userRoutes);
-
-app.use("/api/files", fileRoutes);
-
-app.use("/api/repositories", repositoryRoutes);
-
-app.use("/api/commits", commitRoutes);
-
-app.use("/api/branches", branchRoutes);
-
-app.use("/api/pullrequests", pullRequestRoutes);
-
-app.use("/api/stars", starRoutes);
-
-app.use("/api/forks", forkRoutes);
-
-app.use("/api/issues", issueRoutes);
-
-// --------------------
-// Health Check
-// --------------------
-
+// Test API
 app.get("/", (req, res) => {
   res.json({
     success: true,
@@ -92,39 +64,28 @@ app.get("/", (req, res) => {
   });
 });
 
-// --------------------
-// Error Handler
-// --------------------
+app.use("/api/user", userRoutes);
+app.use("/api/files", fileRoutes);
+app.use("/api/repositories", repositoryRoutes);
+app.use("/api/commits", commitRoutes);
+app.use("/api/branches", branchRoutes);
+app.use("/api/pullrequests", pullRequestRoutes);
+app.use("/api/stars", starRoutes);
+app.use("/api/forks", forkRoutes);
+app.use("/api/issues", issueRoutes);
 
-app.use((err, req, res, next) => {
-  console.log("SERVER ERROR:", err.message);
-
-  res.status(500).json({
-    success: false,
-    message: err.message,
-  });
-});
-
-// --------------------
-// Database + Server
-// --------------------
-
+// Server
 const PORT = process.env.PORT || 5000;
 
-async function startServer() {
-  try {
-    await prisma.$connect();
+prisma
+  .$connect()
+  .then(() => {
+    console.log("Database connected");
+  })
+  .catch((err) => {
+    console.log("Database connection failed:", err);
+  });
 
-    console.log("Database connected ✅");
-
-    app.listen(PORT, () => {
-      console.log(`Server running on port ${PORT} 🚀`);
-    });
-  } catch (error) {
-    console.log("Database connection failed ❌", error.message);
-
-    process.exit(1);
-  }
-}
-
-startServer();
+app.listen(PORT, () => {
+  console.log(`Server running on http://localhost:${PORT}`);
+});
