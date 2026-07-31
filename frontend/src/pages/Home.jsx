@@ -23,7 +23,7 @@ function Home() {
       {/* ================= NAVBAR ================= */}
 
       <nav className="border-b border-[#30363d] bg-[#010409] sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex justify-between items-center">
           <Link to="/" className="flex items-center gap-3 text-2xl font-bold">
             <span>CodeHub</span>
           </Link>
@@ -42,17 +42,17 @@ function Home() {
             </a>
           </div>
 
-          <div className="flex gap-3">
+          <div className="flex gap-2 sm:gap-3">
             <Link
               to="/login"
-              className="px-5 py-2 border border-[#30363d] rounded-lg hover:bg-[#21262d]"
+              className="px-3 sm:px-5 py-2 text-sm sm:text-base border border-[#30363d] rounded-lg"
             >
               Sign In
             </Link>
 
             <Link
               to="/register"
-              className="bg-green-600 hover:bg-green-700 px-5 py-2 rounded-lg"
+              className="bg-green-600 hover:bg-green-700 px-3 sm:px-5 py-2 text-sm sm:text-base rounded-lg"
             >
               Sign Up
             </Link>
@@ -63,11 +63,9 @@ function Home() {
       {/* ================= HERO ================= */}
 
       <section className="relative overflow-hidden">
-        <div className="absolute w-[700px] h-[700px] rounded-full bg-green-500 opacity-10 blur-3xl -top-60 -left-60"></div>
-
-        <div className="absolute w-[700px] h-[700px] rounded-full bg-blue-500 opacity-10 blur-3xl bottom-0 right-0"></div>
-
-        <div className="max-w-7xl mx-auto px-6 py-24 grid lg:grid-cols-2 gap-14 items-center">
+        <div className="hidden md:block absolute w-[700px] h-[700px] rounded-full bg-green-500 opacity-10 blur-3xl -top-60 -left-60"></div>
+        <div className="hidden md:block absolute w-[700px] h-[700px] rounded-full bg-blue-500 opacity-10 blur-3xl bottom-0 right-0"></div>{" "}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-14 md:py-24 grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-14 items-center">
           {/* LEFT */}
 
           <div>
@@ -75,14 +73,16 @@ function Home() {
               Build Your Own GitHub
             </span>
 
-            <h1 className="text-6xl font-extrabold leading-tight mt-8">
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold leading-tight mt-8">
+              {" "}
               Version Control
               <br />
               Made
               <span className="text-green-500"> Simple</span>
             </h1>
 
-            <p className="text-gray-400 mt-8 text-lg leading-8">
+            <p className="text-gray-400 mt-6 text-base sm:text-lg leading-7 sm:leading-8">
+              {" "}
               CodeHub is a GitHub-inspired Version Control System built using
               React, Node.js, Express, Prisma and PostgreSQL.
               <br />
@@ -91,36 +91,35 @@ function Home() {
               requests and collaborate like GitHub.
             </p>
 
-            <div className="flex gap-5 mt-10">
+            <div className="flex flex-col sm:flex-row gap-4 mt-10">
+              {" "}
               <Link
                 to="/register"
-                className="bg-green-600 hover:bg-green-700 px-8 py-4 rounded-lg flex items-center gap-2 font-semibold"
+                className="bg-green-600 hover:bg-green-700 px-3 sm:px-5 py-2 text-sm sm:text-base rounded-lg"
               >
                 Get Started
                 <ArrowRight size={18} />
               </Link>
-
               <Link
                 to="/repositories"
-                className="border border-[#30363d] hover:bg-[#21262d] px-8 py-4 rounded-lg"
+                className="border border-[#30363d] hover:bg-[#21262d] w-full sm:w-auto text-center px-8 py-4 rounded-lg"
               >
                 Explore Repositories
               </Link>
             </div>
 
-            <div className="flex gap-10 mt-12">
+            <div className="grid grid-cols-3 gap-4 sm:gap-10 mt-12 text-center">
+              {" "}
               <div>
-                <h2 className="text-4xl font-bold">100+</h2>
+                <h2 className="text-2xl sm:text-4xl font-bold">100+</h2>
                 <p className="text-gray-400">Commits</p>
               </div>
-
               <div>
-                <h2 className="text-4xl font-bold">50+</h2>
+                <h2 className="text-2xl sm:text-4xl font-bold">50+</h2>
                 <p className="text-gray-400">Branches</p>
               </div>
-
               <div>
-                <h2 className="text-4xl font-bold">20+</h2>
+                <h2 className="text-2xl sm:text-4xl font-bold">20+</h2>
                 <p className="text-gray-400">Pull Requests</p>
               </div>
             </div>
@@ -129,7 +128,8 @@ function Home() {
           {/* RIGHT */}
 
           <div>
-            <div className="bg-[#161b22] border border-[#30363d] rounded-xl p-6 shadow-2xl">
+            <div className="bg-[#161b22] border border-[#30363d] rounded-xl p-4 sm:p-6 shadow-2xl">
+              {" "}
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <FolderGit2 size={32} className="text-green-400" />
@@ -145,9 +145,7 @@ function Home() {
 
                 <Star className="text-yellow-400" />
               </div>
-
               <div className="border-t border-[#30363d] my-6"></div>
-
               <div className="space-y-5">
                 <div className="flex justify-between">
                   <div className="flex gap-2 items-center">
@@ -196,7 +194,7 @@ function Home() {
 
       <section id="features" className="py-24 bg-[#010409]">
         <div className="max-w-7xl mx-auto px-6">
-          <h2 className="text-5xl font-bold text-center">
+          <h2 className="text-3xl sm:text-5xl font-bold text-center">
             Everything you need for Version Control
           </h2>
 
@@ -205,8 +203,8 @@ function Home() {
             requests and collaboration inspired by GitHub.
           </p>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 mt-16">
-            <div className="bg-[#161b22] border border-[#30363d] rounded-xl p-8 hover:border-green-500 transition">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-12">
+            <div className="bg-[#161b22] border border-[#30363d] rounded-xl p-6 hover:border-green-500 transition">
               <GitBranch size={42} className="text-green-400 mb-5" />
 
               <h3 className="text-2xl font-bold">Branches</h3>
@@ -217,7 +215,7 @@ function Home() {
               </p>
             </div>
 
-            <div className="bg-[#161b22] border border-[#30363d] rounded-xl p-8 hover:border-blue-500 transition">
+            <div className="bg-[#161b22] border border-[#30363d] rounded-xl p-6 hover:border-blue-500 transition">
               <FolderGit2 size={42} className="text-blue-400 mb-5" />
 
               <h3 className="text-2xl font-bold">Repository</h3>
@@ -228,7 +226,7 @@ function Home() {
               </p>
             </div>
 
-            <div className="bg-[#161b22] border border-[#30363d] rounded-xl p-8 hover:border-purple-500 transition">
+            <div className="bg-[#161b22] border border-[#30363d] rounded-xl p-6 hover:border-purple-500 transition">
               <GitPullRequest size={42} className="text-purple-400 mb-5" />
 
               <h3 className="text-2xl font-bold">Pull Requests</h3>
@@ -239,7 +237,7 @@ function Home() {
               </p>
             </div>
 
-            <div className="bg-[#161b22] border border-[#30363d] rounded-xl p-8 hover:border-yellow-500 transition">
+            <div className="bg-[#161b22] border border-[#30363d] rounded-xl p-6 hover:border-yellow-500 transition">
               <ShieldCheck size={42} className="text-yellow-400 mb-5" />
 
               <h3 className="text-2xl font-bold">Secure Workflow</h3>
@@ -257,27 +255,35 @@ function Home() {
 
       <section className="py-20">
         <div className="max-w-7xl mx-auto px-6">
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8">
             <div className="bg-[#161b22] rounded-xl p-8 text-center">
-              <h2 className="text-5xl font-bold text-green-400">100+</h2>
+              <h2 className="text-3xl md:text-5xl font-bold text-green-400">
+                100+
+              </h2>
 
               <p className="mt-4 text-gray-400">Repositories</p>
             </div>
 
             <div className="bg-[#161b22] rounded-xl p-8 text-center">
-              <h2 className="text-5xl font-bold text-blue-400">1K+</h2>
+              <h2 className="text-3xl md:text-5xl font-bold text-blue-400">
+                1K+
+              </h2>
 
               <p className="mt-4 text-gray-400">Commits</p>
             </div>
 
             <div className="bg-[#161b22] rounded-xl p-8 text-center">
-              <h2 className="text-5xl font-bold text-purple-400">250+</h2>
+              <h2 className="text-3xl md:text-5xl font-bold text-purple-400">
+                250+
+              </h2>
 
               <p className="mt-4 text-gray-400">Branches</p>
             </div>
 
             <div className="bg-[#161b22] rounded-xl p-8 text-center">
-              <h2 className="text-5xl font-bold text-yellow-400">80+</h2>
+              <h2 className="text-3xl md:text-5xl font-bold text-yellow-400">
+                80+
+              </h2>
 
               <p className="mt-4 text-gray-400">Pull Requests</p>
             </div>
@@ -289,15 +295,20 @@ function Home() {
 
       <section id="workflow" className="py-24 bg-[#010409]">
         <div className="max-w-7xl mx-auto px-6">
-          <h2 className="text-center text-5xl font-bold">How CodeHub Works</h2>
+          <h2 className="text-center text-3xl md:text-5xl font-bold">
+            How CodeHub Works
+          </h2>
 
           <p className="text-center text-gray-400 mt-4">
             Simple workflow inspired by GitHub
           </p>
 
-          <div className="grid md:grid-cols-4 gap-8 mt-20">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-12">
+            {" "}
             <div className="bg-[#161b22] p-8 rounded-xl border border-[#30363d]">
-              <div className="text-5xl font-bold text-green-400">1</div>
+              <div className="text-3xl md:text-5xl font-bold text-green-400">
+                1
+              </div>
 
               <h3 className="text-2xl font-bold mt-6">Create Repository</h3>
 
@@ -305,9 +316,10 @@ function Home() {
                 Start a new project by creating a repository and adding files.
               </p>
             </div>
-
             <div className="bg-[#161b22] p-8 rounded-xl border border-[#30363d]">
-              <div className="text-5xl font-bold text-blue-400">2</div>
+              <div className="text-3xl md:text-5xl font-bold text-blue-400">
+                2
+              </div>
 
               <h3 className="text-2xl font-bold mt-6">Create Branch</h3>
 
@@ -315,9 +327,10 @@ function Home() {
                 Work on new features in separate branches safely.
               </p>
             </div>
-
             <div className="bg-[#161b22] p-8 rounded-xl border border-[#30363d]">
-              <div className="text-5xl font-bold text-purple-400">3</div>
+              <div className="text-3xl md:text-5xl font-bold text-purple-400">
+                3
+              </div>
 
               <h3 className="text-2xl font-bold mt-6">Commit Changes</h3>
 
@@ -325,9 +338,10 @@ function Home() {
                 Save snapshots of your project using commits.
               </p>
             </div>
-
             <div className="bg-[#161b22] p-8 rounded-xl border border-[#30363d]">
-              <div className="text-5xl font-bold text-yellow-400">4</div>
+              <div className="text-3xl md:text-5xl font-bold text-yellow-400">
+                4
+              </div>
 
               <h3 className="text-2xl font-bold mt-6">Merge PR</h3>
 
@@ -344,7 +358,7 @@ function Home() {
 
       <section id="tech" className="py-24">
         <div className="max-w-7xl mx-auto px-6">
-          <h2 className="text-5xl font-bold text-center">
+          <h2 className="text-3xl md:text-5xl font-bold text-center">
             Built With Modern Technologies
           </h2>
 
@@ -352,7 +366,7 @@ function Home() {
             CodeHub is powered by a modern full-stack architecture.
           </p>
 
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-8 mt-16">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-5 mt-16">
             {[
               "React",
               "Node.js",
@@ -376,7 +390,9 @@ function Home() {
 
       <section className="py-24 bg-gradient-to-r from-[#0d1117] via-[#161b22] to-[#0d1117]">
         <div className="max-w-5xl mx-auto text-center px-6">
-          <h2 className="text-5xl font-bold">Ready to Build with CodeHub?</h2>
+          <h2 className="text-3xl md:text-5xl font-bold">
+            Ready to Build with CodeHub?
+          </h2>
 
           <p className="text-gray-400 text-lg mt-6">
             Manage repositories, track commits, create branches, and collaborate
@@ -385,7 +401,7 @@ function Home() {
 
           <button
             onClick={() => navigate("/register")}
-            className="mt-10 bg-green-600 hover:bg-green-700 px-10 py-4 rounded-lg text-xl font-semibold transition"
+            className="mt-10 w-full sm:w-auto bg-green-600 hover:bg-green-700 px-10 py-4 rounded-lg text-lg sm:text-xl font-semibold transition"
           >
             Get Started Free
           </button>
@@ -396,9 +412,9 @@ function Home() {
 
       <footer className="border-t border-[#30363d] bg-[#010409]">
         <div className="max-w-7xl mx-auto px-6 py-16">
-          <div className="grid md:grid-cols-4 gap-10">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+            {" "}
             {/* Brand */}
-
             <div>
               <h2 className="text-3xl font-bold text-white">CodeHub</h2>
 
@@ -407,9 +423,7 @@ function Home() {
                 Node.js, Express, Prisma and PostgreSQL.
               </p>
             </div>
-
             {/* Product */}
-
             <div>
               <h3 className="font-bold text-xl mb-5">Product</h3>
 
@@ -420,9 +434,7 @@ function Home() {
                 <li>Pull Requests</li>
               </ul>
             </div>
-
             {/* Resources */}
-
             <div>
               <h3 className="font-bold text-xl mb-5">Resources</h3>
 
@@ -433,9 +445,7 @@ function Home() {
                 <li>Support</li>
               </ul>
             </div>
-
             {/* Connect */}
-
             <div>
               <h3 className="font-bold text-xl mb-5">Connect</h3>
 
