@@ -7,169 +7,106 @@ import Input from "../components/common/Input";
 import Button from "../components/common/Button";
 
 function Register() {
+  const navigate = useNavigate();
 
-    const navigate = useNavigate();
+  const [formData, setFormData] = useState({
+    username: "",
+    email: "",
+    password: "",
+  });
 
-    const [formData, setFormData] = useState({
-        name: "",
-        email: "",
-        password: ""
+  const [loading, setLoading] = useState(false);
+
+  const [error, setError] = useState("");
+
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+
+      [e.target.name]: e.target.value,
     });
+  };
 
-    const [loading, setLoading] = useState(false);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-    const [error, setError] = useState("");
+    setError("");
 
-    const handleChange = (e) => {
+    setLoading(true);
 
-        setFormData({
+    try {
+      await API.post("/auth/register", formData);
 
-            ...formData,
+      navigate("/login");
+    } catch (err) {
+      setError(err.response?.data?.message || "Registration Failed");
+    }
 
-            [e.target.name]: e.target.value
+    setLoading(false);
+  };
 
-        });
+  return (
+    <AuthLayout>
+      <h2 className="text-2xl font-bold text-center text-white">
+        Create your CodeHub account
+      </h2>
 
-    };
+      <form onSubmit={handleSubmit} className="mt-6 space-y-5">
+        <div>
+          <label className="text-gray-300 text-sm block mb-2">Full Name</label>
 
-    const handleSubmit = async (e) => {
+          <Input
+            type="text"
+            name="username"
+            placeholder="Enter your name"
+            value={formData.username}
+            onChange={handleChange}
+          />
+        </div>
 
-        e.preventDefault();
+        <div>
+          <label className="text-gray-300 text-sm block mb-2">Email</label>
 
-        setError("");
+          <Input
+            type="email"
+            name="email"
+            placeholder="Enter your email"
+            value={formData.email}
+            onChange={handleChange}
+          />
+        </div>
 
-        setLoading(true);
+        <div>
+          <label className="text-gray-300 text-sm block mb-2">Password</label>
 
-        try {
+          <Input
+            type="password"
+            name="password"
+            placeholder="Create password"
+            value={formData.password}
+            onChange={handleChange}
+          />
+        </div>
 
-            await API.post("/auth/register", formData);
+        {error && (
+          <div className="bg-red-500/10 border border-red-500 rounded-md p-3 text-red-400">
+            {error}
+          </div>
+        )}
 
-            navigate("/login");
+        <Button disabled={loading}>
+          {loading ? "Creating Account..." : "Create Account"}
+        </Button>
+      </form>
 
-        } catch (err) {
-
-            setError(
-
-                err.response?.data?.message ||
-
-                "Registration Failed"
-
-            );
-
-        }
-
-        setLoading(false);
-
-    };
-
-    return (
-
-        <AuthLayout>
-
-            <h2 className="text-2xl font-bold text-center text-white">
-
-                Create your CodeHub account
-
-            </h2>
-
-            <form
-                onSubmit={handleSubmit}
-                className="mt-6 space-y-5"
-            >
-
-                <div>
-
-                    <label className="text-gray-300 text-sm block mb-2">
-                        Full Name
-                    </label>
-
-                    <Input
-                        type="text"
-                        name="name"
-                        placeholder="Enter your name"
-                        value={formData.name}
-                        onChange={handleChange}
-                    />
-
-                </div>
-
-                <div>
-
-                    <label className="text-gray-300 text-sm block mb-2">
-                        Email
-                    </label>
-
-                    <Input
-                        type="email"
-                        name="email"
-                        placeholder="Enter your email"
-                        value={formData.email}
-                        onChange={handleChange}
-                    />
-
-                </div>
-
-                <div>
-
-                    <label className="text-gray-300 text-sm block mb-2">
-                        Password
-                    </label>
-
-                    <Input
-                        type="password"
-                        name="password"
-                        placeholder="Create password"
-                        value={formData.password}
-                        onChange={handleChange}
-                    />
-
-                </div>
-
-                {error && (
-
-                    <div className="bg-red-500/10 border border-red-500 rounded-md p-3 text-red-400">
-
-                        {error}
-
-                    </div>
-
-                )}
-
-                <Button disabled={loading}>
-
-                    {
-
-                        loading
-
-                            ? "Creating Account..."
-
-                            : "Create Account"
-
-                    }
-
-                </Button>
-
-            </form>
-
-            <p className="text-center text-gray-400 mt-6">
-
-                Already have an account?
-
-                <Link
-                    to="/login"
-                    className="ml-2 text-blue-400 hover:underline"
-                >
-
-                    Sign In
-
-                </Link>
-
-            </p>
-
-        </AuthLayout>
-
-    );
-
+      <p className="text-center text-gray-400 mt-6">
+        Already have an account?
+        <Link to="/login" className="ml-2 text-blue-400 hover:underline">
+          Sign In
+        </Link>
+      </p>
+    </AuthLayout>
+  );
 }
 
 export default Register;

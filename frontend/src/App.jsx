@@ -15,6 +15,7 @@ import Profile from "./pages/Profile";
 import FollowList from "./pages/FollowList";
 import Issues from "./pages/Issues";
 import ProtectedRoute from "./components/ProtectedRoute";
+import SearchPeople from "./pages/SearchPeople";
 
 function App() {
   return (
@@ -175,6 +176,14 @@ function App() {
           element={
             <ProtectedRoute>
               <Issues />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/search-people"
+          element={
+            <ProtectedRoute>
+              <SearchPeople />
             </ProtectedRoute>
           }
         />

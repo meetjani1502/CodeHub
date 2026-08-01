@@ -1,6 +1,66 @@
 import prisma from "../config/prisma.js";
 
 // ===============================
+// SEARCH USERS
+// ===============================
+export const searchUsers = async (req, res) => {
+  try {
+    const query = req.query.q?.trim();
+
+    if (!query) {
+      return res.status(200).json({
+        success: true,
+        data: [],
+      });
+    }
+
+    const currentUserId = req.user.id;
+
+    const users = await prisma.user.findMany({
+      where: {
+        OR: [
+          { username: { contains: query, mode: "insensitive" } },
+          { email: { contains: query, mode: "insensitive" } },
+        ],
+        NOT: {
+          id: currentUserId,
+        },
+      },
+      select: {
+        id: true,
+        username: true,
+        email: true,
+      },
+      take: 20,
+    });
+
+    // Check which of these the current user already follows
+    const following = await prisma.follow.findMany({
+      where: { followerId: currentUserId },
+      select: { followingId: true },
+    });
+
+    const followingIds = new Set(following.map((f) => f.followingId));
+
+    const data = users.map((u) => ({
+      ...u,
+      isFollowing: followingIds.has(u.id),
+    }));
+
+    res.status(200).json({
+      success: true,
+      data,
+    });
+  } catch (error) {
+    console.error("SEARCH USERS ERROR:", error);
+
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+// ===============================
 // GET FULL PROFILE (own profile)
 // ===============================
 export const getProfile = async (req, res) => {
