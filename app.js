@@ -23,10 +23,9 @@ const app = express();
 // Middleware
 const allowedOrigins = [
   "http://localhost:5173",
-  "https://code-j8u630wkf-meet-s-projects10.vercel.app",
-  process.env.FRONTEND_URL, // set this in Render env vars for your stable frontend domain
-].filter(Boolean); // removes undefined if FRONTEND_URL isn't set
-
+  "https://code-hub-six-iota.vercel.app",
+  process.env.FRONTEND_URL,
+].filter(Boolean);
 app.use(
   cors({
     origin: function (origin, callback) {
