@@ -10,6 +10,7 @@ import {
   getFollowing,
   getMySessions,
   revokeSession,
+  searchUsers,
 } from "../controllers/user.controller.js";
 
 const router = express.Router();
@@ -38,4 +39,7 @@ router.get("/following/:id", authMiddleware, getFollowing);
 // Sessions
 router.get("/sessions", authMiddleware, getMySessions);
 router.put("/sessions/:id/revoke", authMiddleware, revokeSession);
+
+// Search users
+router.get("/search", authMiddleware, searchUsers);
 export default router;
