@@ -36,7 +36,8 @@ app.use(
         return callback(null, true);
       }
 
-      console.log("Blocked by CORS:", origin);
+      console.log("Blocked by CORS. Origin received:", JSON.stringify(origin));
+      console.log("Allowed origins list:", JSON.stringify(allowedOrigins));
       return callback(new Error("Not allowed by CORS"));
     },
     credentials: true,
