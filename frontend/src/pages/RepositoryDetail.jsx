@@ -4,6 +4,7 @@ import API from "../api/axios";
 import { GitBranch, File, GitCommit, Plus, GitPullRequest } from "lucide-react";
 import StatusBadge from "../components/common/StatusBadge";
 import { FaCircleExclamation } from "react-icons/fa6";
+import TimeMachine from "../components/TimeMachine";
 
 function RepositoryDetail() {
   const { id } = useParams();
@@ -56,6 +57,8 @@ function RepositoryDetail() {
 
   const [issueDescription, setIssueDescription] = useState("");
 
+  const [showTimeMachine, setShowTimeMachine] = useState(false);
+
   const fileInputRef = useRef(null);
 
   const openFile = (file) => {
@@ -96,6 +99,9 @@ function RepositoryDetail() {
       });
 
       setEditMode(false);
+
+      // Refresh commit history so the new commit shows up immediately
+      await getCommits();
 
       alert("File updated successfully");
     } catch (error) {
@@ -424,6 +430,12 @@ function RepositoryDetail() {
           >
             <GitPullRequest size={18} />
             Create PR
+          </button>
+          <button
+            onClick={() => setShowTimeMachine(true)}
+            className="btn-secondary flex gap-2 items-center"
+          >
+            🕰️ Time Machine
           </button>
         </div>
       </div>
@@ -1030,6 +1042,15 @@ text-sm
             </div>
           </div>
         </div>
+      )}
+
+      {/* ================= TIME MACHINE ================= */}
+
+      {showTimeMachine && (
+        <TimeMachine
+          repositoryId={id}
+          onClose={() => setShowTimeMachine(false)}
+        />
       )}
     </div>
   );
