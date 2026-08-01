@@ -24,20 +24,20 @@ const app = express();
 const allowedOrigins = [
   "http://localhost:5173",
   "https://code-hub-six-iota.vercel.app",
-  process.env.FRONTEND_URL,
-].filter(Boolean);
+];
+
 app.use(
   cors({
     origin: function (origin, callback) {
-      // allow requests with no origin (like curl, mobile apps, server-to-server)
-      if (!origin) return callback(null, true);
-
-      if (allowedOrigins.includes(origin)) {
+      if (!origin) {
         return callback(null, true);
       }
 
-      console.log("Blocked by CORS. Origin received:", JSON.stringify(origin));
-      console.log("Allowed origins list:", JSON.stringify(allowedOrigins));
+      if (allowedOrigins.includes(origin) || origin.endsWith(".vercel.app")) {
+        return callback(null, true);
+      }
+
+      console.log("Blocked CORS Origin:", origin);
       return callback(new Error("Not allowed by CORS"));
     },
     credentials: true,
