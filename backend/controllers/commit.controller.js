@@ -378,7 +378,70 @@ export const getCommitsByRepository = async (req, res) => {
     });
   }
 };
+// ===============================
+// GET REPOSITORY TIMELINE (Time Machine)
+// Returns all commits with the full file state at each commit
+// ===============================
+export const getRepositoryTimeline = async (req, res) => {
+  try {
+    const repositoryId = Number(req.params.repositoryId);
 
+    const commits = await prisma.commit.findMany({
+      where: { repositoryId },
+      orderBy: { createdAt: "asc" },
+      include: {
+        fileVersions: {
+          select: {
+            filename: true,
+            content: true,
+          },
+        },
+        branch: {
+          select: { name: true },
+        },
+      },
+    });
+
+    if (commits.length === 0) {
+      return res.json({
+        success: true,
+        data: [],
+      });
+    }
+
+    const fileState = {};
+    const timeline = [];
+
+    for (const commit of commits) {
+      for (const fv of commit.fileVersions) {
+        fileState[fv.filename] = fv.content;
+      }
+
+      timeline.push({
+        commitId: commit.id,
+        message: commit.message,
+        branch: commit.branch?.name || null,
+        createdAt: commit.createdAt,
+        files: Object.entries(fileState).map(([filename, content]) => ({
+          filename,
+          content,
+        })),
+      });
+    }
+
+    res.json({
+      success: true,
+      data: timeline,
+    });
+  } catch (error) {
+    console.error("TIMELINE ERROR:", error);
+
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
 export const getCommitDetail = async (req, res) => {
   try {
     const { id } = req.params;

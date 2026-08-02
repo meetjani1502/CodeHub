@@ -494,13 +494,13 @@ export const getPullRequestDiff = async (req, res) => {
 
     const sourceFiles = await prisma.file.findMany({
       where: {
-        branchId: pullRequest.sourceBranchId,
+        repositoryId: pullRequest.sourceBranch.repositoryId,
       },
     });
 
     const targetFiles = await prisma.file.findMany({
       where: {
-        branchId: pullRequest.targetBranchId,
+        repositoryId: pullRequest.targetBranch.repositoryId,
       },
     });
 
