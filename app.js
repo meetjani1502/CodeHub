@@ -21,41 +21,16 @@ dotenv.config();
 const app = express();
 
 // Middleware
-const allowedOrigins = [
-  "http://localhost:5173",
-  "https://code-hub-six-iota.vercel.app",
-];
-
 app.use(
   cors({
-    origin: function (origin, callback) {
-      if (!origin) {
-        return callback(null, true);
-      }
-
-      if (allowedOrigins.includes(origin) || origin.endsWith(".vercel.app")) {
-        return callback(null, true);
-      }
-
-      console.log("Blocked CORS Origin:", origin);
-      return callback(new Error("Not allowed by CORS"));
-    },
+    origin: "https://code-j8u630wkf-meet-s-projects10.vercel.app",
     credentials: true,
-    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"],
   }),
 );
-
-// NOTE: removed app.options("*", cors()) — it crashes on Express 5 / newer
-// path-to-regexp because "*" is no longer a valid bare wildcard path.
-// The cors() middleware above already handles OPTIONS preflight requests.
-
 app.use(cookieParser());
 app.use(express.json());
-
-// routes
+//routes
 app.use("/api/auth", authRoutes);
-
 // Test API
 app.get("/", (req, res) => {
   res.json({
@@ -65,18 +40,19 @@ app.get("/", (req, res) => {
 });
 
 app.use("/api/user", userRoutes);
+
 app.use("/api/files", fileRoutes);
+
 app.use("/api/repositories", repositoryRoutes);
+
 app.use("/api/commits", commitRoutes);
 app.use("/api/branches", branchRoutes);
 app.use("/api/pullrequests", pullRequestRoutes);
 app.use("/api/stars", starRoutes);
 app.use("/api/forks", forkRoutes);
 app.use("/api/issues", issueRoutes);
-
 // Server
 const PORT = process.env.PORT || 5000;
-
 prisma
   .$connect()
   .then(() => {
@@ -85,7 +61,6 @@ prisma
   .catch((err) => {
     console.log("Database connection failed:", err);
   });
-
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
 });

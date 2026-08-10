@@ -11,7 +11,6 @@ import {
   getBranchCommits,
   getCommitsByRepository,
   getCommitDetail,
-  getRepositoryTimeline,
 } from "../controllers/commit.controller.js";
 
 const router = express.Router();
@@ -21,9 +20,6 @@ router.post("/", createCommit);
 
 // Get ALL commits (all repositories) ⭐ keep this at top
 router.get("/all", getAllCommits);
-
-// Repository Time Machine — full file state at each commit
-router.get("/timeline/:repositoryId", getRepositoryTimeline);
 
 // Get repository commits
 router.get("/repository/:repositoryId", getCommitsByRepository);
